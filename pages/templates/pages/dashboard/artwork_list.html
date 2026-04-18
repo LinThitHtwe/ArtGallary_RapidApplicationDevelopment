@@ -1,0 +1,50 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+{% load static %}
+
+{% block title %}Artworks{% endblock %}
+{% block dash_title %}Artworks{% endblock %}
+{% block dash_subtitle %}Gallery items; images live in assets/{% endblock %}
+
+{% block dash_content %}
+<div class="dash-card">
+  <div class="dash-card__head">
+    <h2>All artworks</h2>
+    <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:artwork_create' %}">+ New artwork</a>
+  </div>
+  <div class="dash-table-wrap">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Artist</th>
+          <th>File</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in artworks %}
+          <tr>
+            <td>
+              {% if a.image_path %}
+                <img class="dash-thumb" src="{% static a.image_path %}" alt="" width="52" height="40" />
+              {% endif %}
+            </td>
+            <td><strong>{{ a.title }}</strong></td>
+            <td>{{ a.category.name|default:"—" }}</td>
+            <td>{{ a.artist.name|default:"—" }}</td>
+            <td style="font-size:0.8rem;color:#6b625c;">{{ a.image_path|default:"—" }}</td>
+            <td class="dash-table__actions">
+              <a href="{% url 'dashboard:artwork_edit' a.pk %}">Edit</a>
+              <a href="{% url 'dashboard:artwork_delete' a.pk %}">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6">No artworks yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

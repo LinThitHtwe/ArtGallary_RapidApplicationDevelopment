@@ -21,6 +21,13 @@ class Artwork(models.Model):
     """Artwork model – ER: ARTWORK (ArtworkID PK, ArtistID FK, CategoryID FK)."""
 
     title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, default="")
+    image_path = models.CharField(
+        max_length=500,
+        blank=True,
+        default="",
+        help_text="Filename under static assets (e.g. FabiolaGambar1.jpg).",
+    )
     artist = models.ForeignKey(
         Artist,
         on_delete=models.CASCADE,

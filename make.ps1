@@ -3,8 +3,9 @@
 
 param([Parameter(Position=0)] [string] $Target = "help")
 
+# Use "python -m pip" (not pip.exe): after moving the repo folder, pip.exe launchers
+# still point at the old path and fail with "Fatal error in launcher".
 $Py = "venv\Scripts\python.exe"
-$Pip = "venv\Scripts\pip.exe"
 
 function Ensure-Venv {
     if (-not (Test-Path $Py)) {
@@ -19,17 +20,21 @@ switch ($Target.ToLower()) {
     }
     "init"  {
         Ensure-Venv
-        & $Pip install -r requirements.txt
+        & $Py -m pip install -r requirements.txt
         Write-Host "Done. Run: .\make.ps1 run"
     }
     "install" {
         Ensure-Venv
-        & $Pip install -r requirements.txt
+        & $Py -m pip install -r requirements.txt
         Write-Host "Done."
     }
     "run"   {
-        if (-not (Test-Path $Py)) { Ensure-Venv; & $Pip install -r requirements.txt }
-        & $Py manage.py runserver
+        if (-not (Test-Path $Py)) {
+            Ensure-Venv
+            & $Py -m pip install -r requirements.txt
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        }
+        & $Py manage.py runserver 9000
     }
     "migrate" {
         & $Py manage.py migrate
@@ -45,9 +50,11 @@ switch ($Target.ToLower()) {
     }
     "up"    {
         Ensure-Venv
-        & $Pip install -r requirements.txt
+        & $Py -m pip install -r requirements.txt
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
         & $Py manage.py migrate
-        & $Py manage.py runserver
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        & $Py manage.py runserver 9000
     }
     "clean" {
         if (Test-Path "venv") { Remove-Item -Recurse -Force venv; Write-Host "Removed venv." }
@@ -64,7 +71,7 @@ switch ($Target.ToLower()) {
         Write-Host "  .\make.ps1 makemigrations - Create migrations"
         Write-Host "  .\make.ps1 shell        - Django shell"
         Write-Host "  .\make.ps1 superuser    - Create superuser"
-        Write-Host "  .\make.ps1 up           - install + migrate + run"
+        Write-Host "  .\make.ps1 up           - install deps + migrate + runserver :9000"
         Write-Host "  .\make.ps1 clean        - Remove venv and __pycache__"
         Write-Host "  .\make.ps1 help         - Show this help"
     }

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Inspiration – Studio Radiance{% endblock %}
+
+{% block content %}
+<header class="page-intro">
+  <span class="eyebrow">Notes from the studio</span>
+  <h1>Inspiration</h1>
+  <p class="page-intro__lede">
+    Short posts stored in the database—ideas, rituals, and experiments worth revisiting.
+  </p>
+</header>
+
+<div class="post-list">
+  {% for post in posts %}
+    <article class="post-card">
+      <h2 class="post-card__title">{{ post.title }}</h2>
+      <time class="post-card__date" datetime="{{ post.post_date|date:'c' }}">{{ post.post_date|date:"F j, Y" }}</time>
+      <p class="post-card__content">{{ post.content|truncatewords:48 }}</p>
+    </article>
+  {% empty %}
+    <p class="empty-state">No posts yet. Staff can add them from the <a href="{% url 'dashboard:login' %}">dashboard</a>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

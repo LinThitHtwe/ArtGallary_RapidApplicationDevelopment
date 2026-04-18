@@ -14,7 +14,21 @@ Django MTV project: **pages** (UI), **artists**, **gallery** (Artwork + Category
    venv\Scripts\python.exe manage.py runserver 9000
    ```
 
+**One-shot (install deps, migrate, then server on port 9000):** from the project folder run `.\dev.cmd` or `.\make.bat up` (same as `.\make.ps1 up`).
+
 Open **http://127.0.0.1:9000/** in your browser.
+
+### Static gallery HTML (under `/pages/`)
+
+The former root `.html` files now live as Django templates in **`pages/templates/pages/gallery/`**. Examples: **`/pages/`** (main landing), **`/pages/fabiola-morcillo/`**, **`/pages/valentin-pavageau/`**, **`/pages/butcher-billy/`**, **`/pages/david-sosella/`**, **`/pages/kyle-lambert/`**.
+
+Shared CSS: **`pages/static/pages/styles.css`**. Images stay in **`assets/`** and load via Django **`{% static %}`**.
+
+### Staff dashboard (content management)
+
+- Sign in at **`/dashboard/login/`**. Only **staff** accounts (`is_staff=True`) can use it; everyone else stays on the public site.
+- Create a staff user: `python manage.py createsuperuser` (superusers are staff by default).
+- From the dashboard, staff manage **artists**, **artworks** (uploads are saved as files under **`assets/`**), **posts**, and **categories**. The public “Add content” page was removed.
 
 ---
 

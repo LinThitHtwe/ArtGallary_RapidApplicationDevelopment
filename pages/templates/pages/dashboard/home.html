@@ -1,0 +1,55 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}Overview{% endblock %}
+{% block dash_title %}Overview{% endblock %}
+{% block dash_subtitle %}Counts and recent activity{% endblock %}
+
+{% block dash_content %}
+<div class="dash-stats">
+  <div class="dash-stat">
+    <div class="dash-stat__value">{{ counts.artists }}</div>
+    <div class="dash-stat__label">Artists</div>
+  </div>
+  <div class="dash-stat">
+    <div class="dash-stat__value">{{ counts.artworks }}</div>
+    <div class="dash-stat__label">Artworks</div>
+  </div>
+  <div class="dash-stat">
+    <div class="dash-stat__value">{{ counts.posts }}</div>
+    <div class="dash-stat__label">Posts</div>
+  </div>
+  <div class="dash-stat">
+    <div class="dash-stat__value">{{ counts.categories }}</div>
+    <div class="dash-stat__label">Categories</div>
+  </div>
+</div>
+
+<div class="dash-grid-2">
+  <div class="dash-card dash-mini">
+    <div class="dash-card__head"><h2>Recent artworks</h2></div>
+    <ul>
+      {% for a in recent_art %}
+        <li>
+          <span>{{ a.title }}</span>
+          <span>{{ a.category.name|default:"—" }}</span>
+        </li>
+      {% empty %}
+        <li><span>No artworks yet.</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="dash-card dash-mini">
+    <div class="dash-card__head"><h2>Recent posts</h2></div>
+    <ul>
+      {% for p in recent_posts %}
+        <li>
+          <span>{{ p.title }}</span>
+          <span>{{ p.post_date|date:"M j" }}</span>
+        </li>
+      {% empty %}
+        <li><span>No posts yet.</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

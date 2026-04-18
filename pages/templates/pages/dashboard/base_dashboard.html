@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dash">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} · Studio Radiance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'pages/dashboard.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="dash-layout">
+    <aside class="dash-sidebar" aria-label="Staff navigation">
+      <a class="dash-sidebar__brand" href="{% url 'dashboard:home' %}">
+        <span class="dash-sidebar__mark">S</span>
+        <span class="dash-sidebar__titles">
+          <span class="dash-sidebar__title">Studio</span>
+          <span class="dash-sidebar__sub">Staff</span>
+        </span>
+      </a>
+      <nav class="dash-nav" aria-label="Sections">
+        <span class="dash-nav__label">Manage</span>
+        <a href="{% url 'dashboard:home' %}" class="dash-nav__link{% if dash_section == 'overview' %} dash-nav__link--active{% endif %}">
+          <span class="dash-nav__icon" aria-hidden="true">◎</span>
+          <span class="dash-nav__text">Overview</span>
+        </a>
+        <a href="{% url 'dashboard:artist_list' %}" class="dash-nav__link{% if dash_section == 'artists' %} dash-nav__link--active{% endif %}">
+          <span class="dash-nav__icon" aria-hidden="true">✦</span>
+          <span class="dash-nav__text">Artists</span>
+        </a>
+        <a href="{% url 'dashboard:artwork_list' %}" class="dash-nav__link{% if dash_section == 'artworks' %} dash-nav__link--active{% endif %}">
+          <span class="dash-nav__icon" aria-hidden="true">▣</span>
+          <span class="dash-nav__text">Artworks</span>
+        </a>
+        <a href="{% url 'dashboard:post_list' %}" class="dash-nav__link{% if dash_section == 'posts' %} dash-nav__link--active{% endif %}">
+          <span class="dash-nav__icon" aria-hidden="true">✎</span>
+          <span class="dash-nav__text">Posts</span>
+        </a>
+        <a href="{% url 'dashboard:category_list' %}" class="dash-nav__link{% if dash_section == 'categories' %} dash-nav__link--active{% endif %}">
+          <span class="dash-nav__icon" aria-hidden="true">#</span>
+          <span class="dash-nav__text">Categories</span>
+        </a>
+      </nav>
+      <div class="dash-sidebar__foot">
+        <a class="dash-sidebar__site" href="{% url 'pages:home' %}">View public site</a>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button type="button" class="dash-topbar__toggle" id="js-sidebar-toggle" aria-label="Collapse or expand sidebar" title="Toggle sidebar">
+          <span aria-hidden="true">☰</span>
+        </button>
+        <div class="dash-topbar__crumb">
+          <h1>{% block dash_title %}Dashboard{% endblock %}</h1>
+          <p>{% block dash_subtitle %}Manage gallery content{% endblock %}</p>
+        </div>
+        <div class="dash-topbar__user">
+          <strong>{{ request.user.username }}</strong>
+          <a href="{% url 'dashboard:logout' %}" class="dash-btn dash-btn--ghost" style="margin-top:8px;min-height:36px;padding:0 12px;font-size:0.82rem;">Sign out</a>
+        </div>
+      </header>
+
+      <main class="dash-content">
+        {% if messages %}
+          <ul class="dash-flash">
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% block dash_content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  <script src="{% static 'pages/dashboard.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

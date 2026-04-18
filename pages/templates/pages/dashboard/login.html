@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dash-login-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff sign in · Studio Radiance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'pages/dashboard.css' %}">
+  <style>
+    .dash-login-root { margin:0; min-height:100vh; font-family:"DM Sans",system-ui,sans-serif;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(244,126,165,0.35), transparent),
+        radial-gradient(800px 400px at 100% 0%, rgba(120,80,200,0.2), transparent),
+        linear-gradient(165deg, #120a14 0%, #1a1224 45%, #0f0c12 100%);
+      display: grid; place-items: center; padding: 24px;
+    }
+    .login-card {
+      width: min(100%, 400px);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 36px 32px 32px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.35);
+    }
+    .login-card h1 { margin:0 0 8px; color:#fff; font-size:1.5rem; letter-spacing:-0.02em; }
+    .login-card p.lede { margin:0 0 28px; color:#c4b8d4; font-size:0.92rem; line-height:1.5; }
+    .login-card label { display:block; color:#e8e0f0; font-size:0.82rem; font-weight:600; margin-bottom:6px; }
+    .login-field {
+      width:100%; box-sizing:border-box; padding:12px 14px; border-radius:12px;
+      border:1px solid rgba(255,255,255,0.12); background:rgba(0,0,0,0.25); color:#fff;
+      font:inherit; margin-bottom:4px;
+    }
+    .login-field:focus { outline:2px solid rgba(244,126,165,0.45); border-color:transparent; }
+    .login-card .field { margin-bottom:16px; }
+    .login-card .err { color:#fecaca; font-size:0.85rem; margin-top:6px; }
+    .login-card .nonfield { margin-bottom:16px; }
+    .login-card button[type="submit"] {
+      width:100%; margin-top:12px; padding:14px; border:none; border-radius:12px;
+      background:#f47ea5; color:#fff; font-weight:700; font-size:1rem; cursor:pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .login-card button:hover { transform: translateY(-1px); box-shadow:0 16px 40px rgba(244,126,165,0.25); }
+    .login-foot { margin-top:22px; text-align:center; }
+    .login-foot a { color:#d4c4e8; font-size:0.88rem; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    {% if messages %}
+      <ul style="list-style:none;margin:0 0 18px;padding:0;">
+        {% for message in messages %}
+          <li class="err" style="background:rgba(254,202,202,0.12);padding:10px 12px;border-radius:10px;margin-bottom:8px;">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <h1>Staff sign in</h1>
+    <p class="lede">Use a Django user with <strong>staff</strong> checked (e.g. <code style="font-size:0.78em;opacity:0.9;">python manage.py createsuperuser</code>).</p>
+    <form method="post" action="{% url 'dashboard:login' %}">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+        <div class="err nonfield">{{ form.non_field_errors }}</div>
+      {% endif %}
+      {% for field in form %}
+        <div class="field">
+          {{ field.label_tag }}
+          {{ field }}
+          {% if field.errors %}<div class="err">{{ field.errors }}</div>{% endif %}
+        </div>
+      {% endfor %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <button type="submit">Continue to dashboard</button>
+    </form>
+    <div class="login-foot">
+      <a href="{% url 'pages:home' %}">← Back to public site</a>
+    </div>
+  </div>
+</body>
+</html>

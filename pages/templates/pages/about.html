@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}About – Studio Radiance{% endblock %}
+
+{% block content %}
+<article class="content-page">
+  <header class="content-page__header">
+    <span class="eyebrow">Behind the work</span>
+    <h1>About the artist</h1>
+  </header>
+  <div class="about-grid">
+    <div class="about-copy">
+      <p>
+        Studio Radiance is a digital art practice focused on emotional clarity—each piece
+        balances structure with playful color so the viewer can rest inside the frame for a moment.
+      </p>
+      <h2>Creative inspiration</h2>
+      <p>
+        Inspiration comes from late-night city light, album cover typography, and the way
+        paper textures meet crisp vector edges. Film stills and music videos often provide
+        the first thumbnail of a composition before any brush hits the canvas.
+      </p>
+      <h2>Artistic style</h2>
+      <p>
+        The work sits between <strong>modern illustration</strong> and <strong>abstract atmosphere</strong>:
+        simplified shapes, generous negative space, and a minimalist layout that still feels warm.
+      </p>
+      <p class="about-cta">
+        <a class="nav-button" href="{% url 'pages:legacy_showcase' %}">Artist spotlight pages</a>
+      </p>
+    </div>
+    <div class="about-visual">
+      <div class="image-frame image-frame--about">
+        <img
+          src="{% static 'ValentinGambar.jpg' %}"
+          alt="Artist mood board"
+          width="480"
+          height="540"
+        />
+      </div>
+    </div>
+  </div>
+</article>
+{% endblock %}

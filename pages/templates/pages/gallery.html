@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Gallery – Studio Radiance{% endblock %}
+
+{% block content %}
+<header class="page-intro">
+  <span class="eyebrow">Curated works</span>
+  <h1>Art gallery</h1>
+  <p class="page-intro__lede">
+    Pieces pulled straight from the database—grouped by category so you can wander
+    from illustrations to posters to concept explorations.
+  </p>
+</header>
+
+{% for category_name, artworks in category_groups %}
+  <section class="gallery-section" aria-labelledby="cat-{{ forloop.counter }}">
+    <h2 id="cat-{{ forloop.counter }}" class="gallery-section__title">{{ category_name }}</h2>
+    <div class="gallery-grid">
+      {% for artwork in artworks %}
+        <article class="gallery-card">
+          <a href="{% static artwork.image_path %}" class="gallery-card__media" target="_blank" rel="noopener noreferrer">
+            {% if artwork.image_path %}
+              <img src="{% static artwork.image_path %}" alt="{{ artwork.title }}" loading="lazy" width="400" height="320" />
+            {% else %}
+              <div class="gallery-card__placeholder">No image</div>
+            {% endif %}
+          </a>
+          <div class="gallery-card__body">
+            <h3 class="gallery-card__title">{{ artwork.title }}</h3>
+            <p class="gallery-card__desc">{{ artwork.description|truncatewords:28 }}</p>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+{% empty %}
+  <p class="empty-state">No artworks yet. Staff can add them from the <a href="{% url 'dashboard:login' %}">dashboard</a>.</p>
+{% endfor %}
+{% endblock %}

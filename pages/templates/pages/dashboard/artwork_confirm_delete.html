@@ -1,0 +1,18 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}Delete artwork{% endblock %}
+{% block dash_title %}Delete artwork{% endblock %}
+{% block dash_subtitle %}Removes the database row (file may remain in assets){% endblock %}
+
+{% block dash_content %}
+<div class="dash-confirm">
+  <p>Delete <strong>{{ artwork.title }}</strong>? The image file is not removed from disk automatically.</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="dash-form-actions">
+      <button type="submit" class="dash-btn dash-btn--danger">Yes, delete</button>
+      <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:artwork_list' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

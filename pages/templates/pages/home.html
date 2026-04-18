@@ -1,9 +1,38 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Home – Art Gallery{% endblock %}
+{% block title %}Home – Studio Radiance{% endblock %}
 
 {% block content %}
-<h1>Art Gallery</h1>
-<p>Welcome. This is the pages app (all UI).</p>
-<p>Apps: <strong>artists</strong>, <strong>gallery</strong> (Artwork + Category), <strong>blog</strong> (Post).</p>
+<section class="hero-section hero-section--single">
+  <div class="hero-copy">
+    <span class="eyebrow">Where imagination comes alive</span>
+    <h1>Digital art &amp; inspiration</h1>
+    <p>
+      Welcome to a small corner of the web dedicated to bold color, narrative imagery,
+      and the spark that starts every new canvas. Browse the gallery for curated works
+      and read Inspiration for process notes and creative experiments.
+    </p>
+    <a class="primary-button" href="{% url 'pages:gallery' %}">View gallery</a>
+  </div>
+  <div class="hero-image">
+    <div class="image-frame image-frame--hero">
+      {% if featured and featured.image_path %}
+        <img
+          src="{% static featured.image_path %}"
+          alt="{{ featured.title }}"
+          width="500"
+          height="560"
+        />
+      {% else %}
+        <img
+          src="{% static 'FabiolaGambar1.jpg' %}"
+          alt="Featured artwork"
+          width="500"
+          height="560"
+        />
+      {% endif %}
+    </div>
+  </div>
+</section>
 {% endblock %}

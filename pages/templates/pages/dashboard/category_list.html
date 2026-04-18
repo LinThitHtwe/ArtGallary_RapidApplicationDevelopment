@@ -1,0 +1,54 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}Categories{% endblock %}
+{% block dash_title %}Categories{% endblock %}
+{% block dash_subtitle %}Used to group artworks on the public gallery{% endblock %}
+
+{% block dash_content %}
+<div class="dash-card" style="margin-bottom:20px;">
+  <div class="dash-card__head">
+    <h2>Add category</h2>
+  </div>
+  <div style="padding:18px 20px 22px;">
+    <form method="post" class="dash-inline-form">
+      {% csrf_token %}
+      <div class="field">
+        <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+      </div>
+      <button type="submit" class="dash-btn dash-btn--primary" style="min-height:44px;">Add</button>
+    </form>
+  </div>
+</div>
+
+<div class="dash-card">
+  <div class="dash-card__head">
+    <h2>Existing categories</h2>
+  </div>
+  <div class="dash-table-wrap">
+    <table class="dash-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Artworks</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in categories %}
+          <tr>
+            <td><strong>{{ c.name }}</strong></td>
+            <td>{{ c._n }}</td>
+            <td class="dash-table__actions">
+              <a href="{% url 'dashboard:category_delete' c.pk %}">Delete</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3">No categories yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

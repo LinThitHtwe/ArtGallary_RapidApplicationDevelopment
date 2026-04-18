@@ -1,0 +1,18 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}Delete post{% endblock %}
+{% block dash_title %}Delete post{% endblock %}
+{% block dash_subtitle %}This cannot be undone{% endblock %}
+
+{% block dash_content %}
+<div class="dash-confirm">
+  <p>Delete the post <strong>{{ post.title }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="dash-form-actions">
+      <button type="submit" class="dash-btn dash-btn--danger">Yes, delete</button>
+      <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:post_list' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

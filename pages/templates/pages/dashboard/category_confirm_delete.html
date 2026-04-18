@@ -1,0 +1,18 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}Delete category{% endblock %}
+{% block dash_title %}Delete category{% endblock %}
+{% block dash_subtitle %}May fail if artworks still reference it{% endblock %}
+
+{% block dash_content %}
+<div class="dash-confirm">
+  <p>Delete category <strong>{{ category.name }}</strong>? Artworks in this category are deleted from the database as well (cascade).</p>
+  <form method="post">
+    {% csrf_token %}
+    <div class="dash-form-actions">
+      <button type="submit" class="dash-btn dash-btn--danger">Yes, delete</button>
+      <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:category_list' %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

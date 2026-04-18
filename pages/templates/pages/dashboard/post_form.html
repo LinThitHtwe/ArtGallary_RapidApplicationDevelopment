@@ -1,0 +1,23 @@
+{% extends "pages/dashboard/base_dashboard.html" %}
+
+{% block title %}{% if editing %}Edit post{% else %}New post{% endif %}{% endblock %}
+{% block dash_title %}{% if editing %}Edit post{% else %}New post{% endif %}{% endblock %}
+{% block dash_subtitle %}Title, body, artist, and publish date{% endblock %}
+
+{% block dash_content %}
+<form method="post" class="dash-form-card">
+  {% csrf_token %}
+  {% for field in form %}
+    <div class="field">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}<p class="field__help" style="margin:6px 0 0;font-size:0.85rem;color:#7a726c;">{{ field.help_text }}</p>{% endif %}
+      {% if field.errors %}<ul class="dash-errorlist">{{ field.errors }}</ul>{% endif %}
+    </div>
+  {% endfor %}
+  <div class="dash-form-actions">
+    <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+    <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:post_list' %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
