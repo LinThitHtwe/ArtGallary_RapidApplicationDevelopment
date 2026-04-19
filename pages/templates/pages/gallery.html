@@ -127,7 +127,7 @@
                       data-lb-item
                       data-lb-src="{% static art.image_path %}"
                       data-lb-title="{{ art.title }}"
-                      data-lb-artist="{% if art.artist %}{{ art.artist.name }}{% endif %}"
+                      data-lb-artist=""
                       data-lb-desc="{{ art.description|default:'' }}"
                       data-lb-cat="Sampler"
                       aria-label="View {{ art.title }}">
@@ -175,7 +175,7 @@
               {% for artwork in artworks %}
                 {% if forloop.first %}
                   <article data-gallery-reveal
-                           {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="{% if artwork.artist %}{{ artwork.artist.name }}{% endif %}" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
+                           {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
                            class="group relative mb-5 min-h-[300px] lg:min-h-[380px] rounded-2xl overflow-hidden bg-ink ring-1 ring-black/10 shadow-[0_24px_60px_-20px_rgba(31,28,26,0.35)] {% if artwork.image_path %}cursor-pointer{% endif %}"
                            role="{% if artwork.image_path %}button{% else %}article{% endif %}"
                            {% if artwork.image_path %}tabindex="0" aria-label="View {{ artwork.title }}"{% endif %}>
@@ -189,9 +189,6 @@
                     <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
                     <div class="absolute inset-x-0 bottom-0 z-[2] p-5 lg:p-8 text-cream pointer-events-none">
                       <h3 class="font-display text-2xl lg:text-4xl leading-tight">{{ artwork.title }}</h3>
-                      {% if artwork.artist %}
-                        <p class="mt-2 text-[0.7rem] tracking-[0.14em] uppercase text-cream/70">{{ artwork.artist.name }}</p>
-                      {% endif %}
                       {% if artwork.description %}
                         <p class="mt-3 text-sm lg:text-base text-cream/85 line-clamp-3 max-w-2xl font-serif leading-relaxed">{{ artwork.description }}</p>
                       {% endif %}
@@ -208,7 +205,7 @@
                 {% for artwork in artworks %}
                   {% if not forloop.first %}
                     <article data-gallery-reveal
-                             {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="{% if artwork.artist %}{{ artwork.artist.name }}{% endif %}" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
+                             {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
                              class="group relative min-h-[240px] rounded-2xl overflow-hidden bg-white ring-1 ring-black/[0.07] shadow-md {% if artwork.image_path %}cursor-pointer{% endif %}"
                              role="{% if artwork.image_path %}button{% else %}article{% endif %}"
                              {% if artwork.image_path %}tabindex="0" aria-label="View {{ artwork.title }}"{% endif %}>
@@ -222,9 +219,6 @@
                       <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-90 group-hover:opacity-100 pointer-events-none"></div>
                       <div class="absolute inset-x-0 bottom-0 z-[2] p-4 text-cream pointer-events-none">
                         <h3 class="font-display text-lg leading-tight">{{ artwork.title }}</h3>
-                        {% if artwork.artist %}
-                          <p class="mt-1 text-[0.65rem] tracking-[0.14em] uppercase text-cream/70">{{ artwork.artist.name }}</p>
-                        {% endif %}
                         {% if artwork.description %}
                           <p class="mt-2 text-xs text-cream/85 line-clamp-2 font-serif leading-relaxed">{{ artwork.description }}</p>
                         {% endif %}

@@ -116,7 +116,7 @@
       </ul>
     {% endif %}
     <h1>Sign in to the atelier</h1>
-    <p class="lede">Private access for updating your single-artist gallery and journal on the live site.</p>
+    <p class="lede">Private access for updating the public gallery and journal on the live site.</p>
     <form method="post" action="{% url 'dashboard:login' %}">
       {% csrf_token %}
       {% if form.non_field_errors %}

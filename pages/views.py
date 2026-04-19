@@ -2,7 +2,6 @@ from collections import OrderedDict
 
 from django.shortcuts import render
 
-from artists.models import Artist
 from blog.models import Post
 from gallery.models import Artwork, Category
 
@@ -21,7 +20,7 @@ def _collage_three(artworks):
 
 def home(request):
     strip_qs = (
-        Artwork.objects.select_related("category", "artist")
+        Artwork.objects.select_related("category")
         .exclude(image_path="")
         .order_by("title")
     )
@@ -50,21 +49,22 @@ def home(request):
             i += 1
     bento_artworks = bento_artworks[:7]
 
-    latest_post = (
-        Post.objects.select_related("artist").order_by("-post_date", "-id").first()
-    )
+    latest_post = Post.objects.order_by("-post_date", "-id").first()
 
-    # Marquee data: artist names + category labels, repeated for an endless band.
-    artist_names = list(Artist.objects.values_list("name", flat=True)[:12])
     category_names = list(Category.objects.values_list("name", flat=True)[:8])
-    marquee_terms = [n for n in artist_names + category_names if n]
+    studio_terms = [
+        "Studio Radiance",
+        "Colour studies",
+        "Late sketches",
+        "Quiet compositions",
+    ]
+    marquee_terms = [n for n in list(category_names) + studio_terms if n]
     if not marquee_terms:
-        marquee_terms = ["Studio Radiance", "Posters", "Concept art", "Illustration"]
+        marquee_terms = ["Posters", "Concept art", "Illustration"]
 
     stats = {
         "works": Artwork.objects.count(),
         "posts": Post.objects.count(),
-        "artists": Artist.objects.count(),
         "categories": Category.objects.count(),
     }
 
@@ -89,9 +89,7 @@ def about(request):
 
 
 def gallery_page(request):
-    qs = Artwork.objects.select_related("category", "artist").order_by(
-        "category__name", "title"
-    )
+    qs = Artwork.objects.select_related("category").order_by("category__name", "title")
     groups = OrderedDict()
     for artwork in qs:
         label = artwork.category.name if artwork.category else "Uncategorized"
@@ -109,7 +107,7 @@ def gallery_page(request):
 
 
 def inspiration(request):
-    posts = Post.objects.select_related("artist").order_by("-post_date", "-id")[:12]
+    posts = Post.objects.order_by("-post_date", "-id")[:12]
     return render(
         request,
         "pages/inspiration.html",

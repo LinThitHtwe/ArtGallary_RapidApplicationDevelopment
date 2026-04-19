@@ -14,7 +14,6 @@ from .forms import (
     DashboardArtworkForm,
     DashboardPostForm,
     StaffAuthenticationForm,
-    get_site_artist,
 )
 
 
@@ -64,7 +63,6 @@ def dashboard_home(request):
     }
     recent_art = Artwork.objects.select_related("category").order_by("-id")[:8]
     recent_posts = Post.objects.order_by("-post_date")[:6]
-    site_artist = get_site_artist()
     return render(
         request,
         "pages/dashboard/home.html",
@@ -72,7 +70,6 @@ def dashboard_home(request):
             "counts": counts,
             "recent_art": recent_art,
             "recent_posts": recent_posts,
-            "site_artist_name": site_artist.name,
             "dash_section": "overview",
         },
     )

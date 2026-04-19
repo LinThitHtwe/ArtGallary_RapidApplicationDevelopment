@@ -1,7 +1,5 @@
 from django.db import models
 
-from artists.models import Artist
-
 
 class Category(models.Model):
     """Category model – ER: CATEGORY (CategoryID PK)."""
@@ -18,7 +16,7 @@ class Category(models.Model):
 
 
 class Artwork(models.Model):
-    """Artwork model – ER: ARTWORK (ArtworkID PK, ArtistID FK, CategoryID FK)."""
+    """Artwork model — assignment: ArtworkID, Title, Description, ImagePath, Category."""
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
@@ -27,13 +25,6 @@ class Artwork(models.Model):
         blank=True,
         default="",
         help_text="Filename under static assets (e.g. FabiolaGambar1.jpg).",
-    )
-    artist = models.ForeignKey(
-        Artist,
-        on_delete=models.CASCADE,
-        related_name="artworks",
-        null=True,
-        blank=True,
     )
     category = models.ForeignKey(
         Category,

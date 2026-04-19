@@ -4,19 +4,10 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.utils import timezone
 
-from artists.models import Artist
 from blog.models import Post
 from gallery.models import Artwork, Category
 
 from .utils_assets import save_uploaded_image
-
-
-def get_site_artist():
-    """Single-artist site: use the first Artist row, or create a default studio name."""
-    artist = Artist.objects.order_by("pk").first()
-    if artist:
-        return artist
-    return Artist.objects.create(name="Studio Radiance")
 
 
 class StaffAuthenticationForm(AuthenticationForm):
@@ -56,7 +47,6 @@ class DashboardPostForm(forms.ModelForm):
 
     def save(self, commit=True):
         obj = super().save(commit=False)
-        obj.artist = get_site_artist()
         if not obj.pk:
             obj.post_date = timezone.now()
         if commit:
@@ -108,7 +98,6 @@ class DashboardArtworkForm(forms.ModelForm):
 
     def save(self, commit=True):
         obj = super().save(commit=False)
-        obj.artist = get_site_artist()
         f = self.cleaned_data.get("image_file")
         if f:
             obj.image_path = save_uploaded_image(f)
