@@ -26,7 +26,7 @@ Shared CSS: **`pages/static/pages/styles.css`**. Images stay in **`assets/`** an
 
 ### Staff dashboard (content management)
 
-- Sign in at **`/dashboard/login/`**. Only **staff** accounts (`is_staff=True`) can use it; everyone else stays on the public site.
+- Sign in at **`/dashboard/login/`** (not linked from the public nav—staff use the URL directly). Only **staff** accounts (`is_staff=True`) can use it.
 - Create a staff user: `python manage.py createsuperuser` (superusers are staff by default).
 - From the dashboard, staff manage **artists**, **artworks** (uploads are saved as files under **`assets/`**), **posts**, and **categories**. The public “Add content” page was removed.
 

@@ -24,8 +24,8 @@
         {% for a in artists %}
           <tr>
             <td><strong>{{ a.name }}</strong></td>
-            <td>{{ a._works }}</td>
-            <td>{{ a._posts }}</td>
+            <td>{{ a.artwork_count }}</td>
+            <td>{{ a.post_count }}</td>
             <td class="dash-table__actions">
               <a href="{% url 'dashboard:artist_edit' a.pk %}">Edit</a>
               <a href="{% url 'dashboard:artist_delete' a.pk %}">Delete</a>

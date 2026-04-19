@@ -5,7 +5,7 @@
 
 {% block content %}
 <header class="page-intro">
-  <span class="eyebrow">Curated works</span>
+  <span class="eyebrow eyebrow--soft">Curated works</span>
   <h1>Art gallery</h1>
   <p class="page-intro__lede">
     Pieces pulled straight from the database—grouped by category so you can wander
@@ -35,6 +35,6 @@
     </div>
   </section>
 {% empty %}
-  <p class="empty-state">No artworks yet. Staff can add them from the <a href="{% url 'dashboard:login' %}">dashboard</a>.</p>
+  <p class="empty-state">No artworks yet. Content is managed through the staff dashboard.</p>
 {% endfor %}
 {% endblock %}

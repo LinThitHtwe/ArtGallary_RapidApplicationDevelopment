@@ -39,7 +39,7 @@
         {% for c in categories %}
           <tr>
             <td><strong>{{ c.name }}</strong></td>
-            <td>{{ c._n }}</td>
+            <td>{{ c.artwork_count }}</td>
             <td class="dash-table__actions">
               <a href="{% url 'dashboard:category_delete' c.pk %}">Delete</a>
             </td>

@@ -5,29 +5,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Studio Radiance{% endblock %}</title>
+  {% include "partials/fonts_public.html" %}
   <link rel="stylesheet" href="{% static 'pages/styles.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-<body>
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="{% url 'pages:home' %}" class="brand brand-link">
-        <span class="brand-mark">S</span>
-        <span class="brand-name">Studio Radiance</span>
-      </a>
-      <nav class="site-nav site-nav--main" aria-label="Main">
-        <a href="{% url 'pages:home' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'home' %} nav-link--active{% endif %}">Home</a>
-        <a href="{% url 'pages:about' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'about' %} nav-link--active{% endif %}">About</a>
-        <a href="{% url 'pages:gallery' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'gallery' %} nav-link--active{% endif %}">Gallery</a>
-        <a href="{% url 'pages:inspiration' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'inspiration' %} nav-link--active{% endif %}">Inspiration</a>
-        {% if user.is_authenticated and user.is_staff %}
-          <a href="{% url 'dashboard:home' %}" class="nav-button{% if request.resolver_match and request.resolver_match.namespace == 'dashboard' %} nav-button--active{% endif %}">Dashboard</a>
-        {% else %}
-          <a href="{% url 'dashboard:login' %}" class="nav-button">Staff login</a>
-        {% endif %}
-      </nav>
-    </header>
+<body class="{% block body_class %}{% endblock %}">
+  <div class="site-header-wrap" id="siteHeaderWrap" data-nav-scroll>
+    <div class="site-header-inner">
+      <header class="site-header">
+        <a href="{% url 'pages:home' %}" class="brand brand-link" aria-label="Studio Radiance — Home">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span class="brand-name">
+            Studio <span class="brand-name__accent">Radiance</span>
+          </span>
+        </a>
+        <nav class="site-nav site-nav--main" aria-label="Main">
+          <a href="{% url 'pages:home' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'home' %} nav-link--active{% endif %}">Home</a>
+          <a href="{% url 'pages:about' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'about' %} nav-link--active{% endif %}">About</a>
+          <a href="{% url 'pages:gallery' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'gallery' %} nav-link--active{% endif %}">Gallery</a>
+          <a href="{% url 'pages:inspiration' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'inspiration' %} nav-link--active{% endif %}">Inspiration</a>
+          {% if user.is_authenticated and user.is_staff %}
+            <a href="{% url 'dashboard:home' %}" class="nav-button{% if request.resolver_match and request.resolver_match.namespace == 'dashboard' %} nav-button--active{% endif %}">Dashboard</a>
+          {% endif %}
+        </nav>
+      </header>
+    </div>
+  </div>
 
+  <div class="page-shell">
     {% if messages %}
       <ul class="flash-messages" role="status">
         {% for message in messages %}
@@ -36,7 +41,18 @@
       </ul>
     {% endif %}
 
-    {% block content %}{% endblock %}
+    <main class="site-main">
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <span>Studio Radiance · {% now "Y" %}</span>
+    </footer>
   </div>
+  {# Lenis smooth scroll — site-wide (sync so inline page scripts see window.__lenis) #}
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.45/dist/lenis.min.js"></script>
+  <script src="{% static 'pages/smooth-scroll.js' %}"></script>
+  <script src="{% static 'pages/site-nav.js' %}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

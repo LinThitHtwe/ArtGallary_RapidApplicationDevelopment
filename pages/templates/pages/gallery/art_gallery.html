@@ -4,22 +4,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Creative Service Landing</title>
+  <title>Showcase · Studio Radiance</title>
+  {% include "partials/fonts_public.html" %}
   <link rel="stylesheet" href="{% static 'pages/styles.css' %}" />
 </head>
 <body>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand">
-        <span class="brand-mark">R</span>
-        <span class="brand-name">RAPID PROJECT</span>
-      </div>
+      <a href="{% url 'pages:home' %}" class="brand brand-link">
+        <span class="brand-mark">S</span>
+        <span class="brand-name">Studio Radiance</span>
+      </a>
       <nav class="site-nav site-nav--main">
         <a href="{% url 'pages:home' %}" class="nav-link">Home</a>
         <a href="{% url 'pages:about' %}" class="nav-link">About</a>
         <a href="{% url 'pages:gallery' %}" class="nav-link">Gallery</a>
         <a href="{% url 'pages:inspiration' %}" class="nav-link">Inspiration</a>
-        <a href="{% url 'dashboard:login' %}" class="nav-button">Staff login</a>
       </nav>
     </header>
 

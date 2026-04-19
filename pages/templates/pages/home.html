@@ -1,38 +1,690 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Home – Studio Radiance{% endblock %}
+{% block title %}Studio Radiance — digital art & inspiration{% endblock %}
+
+{% block body_class %}home-tw{% endblock %}
+
+{% block extra_head %}
+{# tag <html> with .hjs immediately so we can hide reveal-targets pre-hydration without a flash #}
+<script>document.documentElement.classList.add("hjs");</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: "#fffbf7", paper: "#faf6f1", paper2: "#f0e8e0",
+          blush: "#fdeef2", peach: "#fbe8ec", sand: "#f9efe2",
+          ink: "#1f1c1a", "ink-soft": "#454039", muted: "#6e665e",
+          rose: "#c45b6e", "rose-deep": "#9e3d52",
+        },
+        fontFamily: {
+          display: ['"Cormorant Garamond"', "Georgia", "serif"],
+          serif:   ['"Newsreader"', "Georgia", "serif"],
+          sans:    ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+        },
+        maxWidth: { shell: "1180px", wide: "1320px" },
+      },
+    },
+  };
+</script>
+
+<!-- JS Libraries: GSAP + ScrollTrigger, vanilla-tilt (Lenis loads globally from base.html) -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.8.1/dist/vanilla-tilt.min.js"></script>
+
+<style>
+  /* Break out of .page-shell on home, keep header/footer constrained */
+  body.home-tw {
+    overflow-x: clip;
+  }
+  body.home-tw .page-shell {
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+  body.home-tw .site-header-inner,
+  body.home-tw .flash-messages,
+  body.home-tw .site-footer {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 42px);
+  }
+  body.home-tw .site-main { min-height: auto; }
+
+  /* CSS marquee fallback (still visible before JS hydrates) */
+  @keyframes home-marquee-css {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .marquee-track { animation: home-marquee-css 38s linear infinite; }
+  .marquee:hover .marquee-track { animation-play-state: paused; }
+
+  /* Paper grain */
+  .grain {
+    background-image: radial-gradient(rgba(31,28,26,0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  /* Reveal targets — hidden only when JS is available, so non-JS users still see content */
+  html.hjs [data-reveal]      { opacity: 0; transform: translateY(28px); }
+  html.hjs [data-reveal-line] { transform: translateY(110%); }
+  .magnetic { display: inline-flex; will-change: transform; }
+  .magnetic > * { display: inline-flex; will-change: transform; }
+
+  /* Pinned horizontal "scroll the wall" */
+  .scroll-wall { height: 100vh; overflow: hidden; position: relative; }
+  .scroll-wall-track {
+    display: flex;
+    gap: clamp(16px, 2vw, 28px);
+    padding-inline: clamp(24px, 6vw, 80px);
+    align-items: center;
+    height: 100%;
+    will-change: transform;
+  }
+  .scroll-wall-card {
+    flex: 0 0 clamp(260px, 30vw, 380px);
+    height: clamp(360px, 60vh, 520px);
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
+    box-shadow: 0 18px 50px -18px rgba(31,28,26,0.35);
+    ring: 1px solid rgba(0,0,0,0.05);
+  }
+  .scroll-wall-card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  /* Custom dot cursor */
+  .dot-cursor {
+    position: fixed; top: 0; left: 0; width: 12px; height: 12px;
+    background: #c45b6e; border-radius: 999px; pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%); opacity: 0;
+    transition: opacity 0.2s ease, width 0.18s ease, height 0.18s ease, background-color 0.2s ease, border-color 0.2s ease;
+    border: 1.5px solid transparent;
+  }
+  .dot-cursor.visible { opacity: 0.9; }
+  .dot-cursor.hover   { width: 42px; height: 42px; background: transparent; border-color: rgba(196,91,110,0.55); }
+  @media (hover: none) { .dot-cursor { display: none; } }
+
+  /* Hero headline mask reveal helper.
+     `overflow: hidden` clips the line during reveal; padding-bottom leaves room
+     for italic descenders (g, y, p…) so they don't get cut. After GSAP finishes
+     the reveal it removes the clip via `.mask-line--shown`. */
+  .mask-line {
+    display: block;
+    overflow: hidden;
+    line-height: 1.02;
+    padding-bottom: 0.22em;
+  }
+  .mask-line--shown { overflow: visible; }
+</style>
+{% endblock %}
 
 {% block content %}
-<section class="hero-section hero-section--single">
-  <div class="hero-copy">
-    <span class="eyebrow">Where imagination comes alive</span>
-    <h1>Digital art &amp; inspiration</h1>
-    <p>
-      Welcome to a small corner of the web dedicated to bold color, narrative imagery,
-      and the spark that starts every new canvas. Browse the gallery for curated works
-      and read Inspiration for process notes and creative experiments.
-    </p>
-    <a class="primary-button" href="{% url 'pages:gallery' %}">View gallery</a>
-  </div>
-  <div class="hero-image">
-    <div class="image-frame image-frame--hero">
-      {% if featured and featured.image_path %}
-        <img
-          src="{% static featured.image_path %}"
-          alt="{{ featured.title }}"
-          width="500"
-          height="560"
-        />
-      {% else %}
-        <img
-          src="{% static 'FabiolaGambar1.jpg' %}"
-          alt="Featured artwork"
-          width="500"
-          height="560"
-        />
-      {% endif %}
+<div class="font-sans text-ink" id="home-root">
+
+  {# Decorative dot cursor (hidden on touch) #}
+  <div class="dot-cursor" id="dotCursor" aria-hidden="true"></div>
+
+  {# ──────────── HERO ──────────── #}
+  <section class="relative overflow-hidden" id="hero">
+    <div class="pointer-events-none absolute inset-0 -z-10">
+      <div class="absolute -top-32 -left-24 size-[520px] rounded-full bg-blush blur-3xl opacity-70" data-parallax="0.25"></div>
+      <div class="absolute top-40 right-0 size-[420px] rounded-full bg-sand blur-3xl opacity-80"   data-parallax="-0.18"></div>
+      <div class="absolute inset-0 grain opacity-40"></div>
+    </div>
+
+    <span aria-hidden="true"
+          class="pointer-events-none select-none absolute -right-10 top-4 lg:top-8 font-display italic
+                 text-[22rem] lg:text-[34rem] leading-none text-rose-deep/[0.06]"
+          data-parallax="-0.3">r.</span>
+
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)] pt-6 pb-24 lg:pt-12 lg:pb-32">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-end">
+
+        {# ── Left ── #}
+        <div class="lg:col-span-7 relative">
+          <div data-reveal class="inline-flex items-center gap-2.5 rounded-full bg-white/70 backdrop-blur px-3.5 py-1.5 ring-1 ring-black/5">
+            <span class="relative flex size-2">
+              <span class="absolute inset-0 rounded-full bg-rose animate-ping opacity-60"></span>
+              <span class="relative rounded-full size-2 bg-rose"></span>
+            </span>
+            <span class="text-[0.7rem] tracking-[0.22em] uppercase text-ink-soft font-medium">
+              Open today · digital art &amp; inspiration
+            </span>
+          </div>
+
+          <h1 class="mt-7 font-display font-medium text-ink leading-[1.0] tracking-[-0.035em] text-[clamp(2.8rem,8vw,5.75rem)]">
+            <span class="mask-line"><span data-reveal-line>An archive of</span></span>
+            <span class="mask-line"><span data-reveal-line><em class="italic text-rose-deep not-italic-hack">imagined</em> things,</span></span>
+            <span class="mask-line"><span data-reveal-line>quietly collected.</span></span>
+          </h1>
+
+          <p data-reveal class="mt-7 max-w-xl font-serif text-[1.08rem] leading-relaxed text-ink-soft">
+            Studio Radiance is a small wall of digital paintings, posters and concept art —
+            arranged beside short journal notes about how the work came to be.
+            Wander in, take your time.
+          </p>
+
+          <div data-reveal class="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <a href="{% url 'pages:gallery' %}" data-magnetic
+               class="magnetic group rounded-full bg-ink text-cream px-7 py-3.5 text-sm font-medium tracking-wide hover:bg-rose-deep transition-colors">
+              <span class="inline-flex items-center gap-3">
+                Step inside the gallery
+                <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+              </span>
+            </a>
+            <a href="{% url 'pages:inspiration' %}"
+               class="text-sm font-medium tracking-wide text-ink border-b border-ink/40 pb-0.5 hover:text-rose-deep hover:border-rose-deep transition-colors">
+              Read the journal
+            </a>
+          </div>
+
+          {# Animated counter stats #}
+          <dl data-reveal class="mt-12 grid grid-cols-4 gap-0 border-t border-black/10 pt-5 max-w-2xl">
+            <div class="px-3 first:pl-0">
+              <dt class="text-[0.65rem] tracking-[0.16em] uppercase text-muted font-medium">Works</dt>
+              <dd class="font-display text-3xl lg:text-4xl mt-1 leading-none" data-counter="{{ stats.works|default:0 }}">0</dd>
+            </div>
+            <div class="px-3 border-l border-black/10">
+              <dt class="text-[0.65rem] tracking-[0.16em] uppercase text-muted font-medium">Notes</dt>
+              <dd class="font-display text-3xl lg:text-4xl mt-1 leading-none" data-counter="{{ stats.posts|default:0 }}">0</dd>
+            </div>
+            <div class="px-3 border-l border-black/10">
+              <dt class="text-[0.65rem] tracking-[0.16em] uppercase text-muted font-medium">Artists</dt>
+              <dd class="font-display text-3xl lg:text-4xl mt-1 leading-none" data-counter="{{ stats.artists|default:0 }}">0</dd>
+            </div>
+            <div class="px-3 border-l border-black/10">
+              <dt class="text-[0.65rem] tracking-[0.16em] uppercase text-muted font-medium">Rooms</dt>
+              <dd class="font-display text-3xl lg:text-4xl mt-1 leading-none" data-counter="{{ stats.categories|default:0 }}">0</dd>
+            </div>
+          </dl>
+        </div>
+
+        {# ── Right: floating image stack with mouse parallax ── #}
+        <div class="lg:col-span-5 relative">
+          <div class="relative mx-auto max-w-md lg:max-w-none aspect-[4/5]" id="heroStack">
+            <div class="absolute -inset-4 lg:-inset-6 rounded-[28px] bg-gradient-to-br from-rose/20 via-blush to-sand rotate-[-3deg]"></div>
+
+            {% if collage_three|length >= 3 %}
+              <figure class="absolute -left-2 top-6 w-[55%] aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-black/5 bg-white shadow-[0_22px_48px_-18px_rgba(31,28,26,0.35)] rotate-[-7deg]"
+                      data-float="0.5">
+                <img src="{% static collage_three.1.image_path %}" alt="{{ collage_three.1.title }}" class="w-full h-full object-cover" loading="eager" />
+              </figure>
+              <figure class="absolute -right-3 -top-2 w-[58%] aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-black/5 bg-white shadow-[0_22px_48px_-18px_rgba(31,28,26,0.35)] rotate-[6deg]"
+                      data-float="-0.4">
+                <img src="{% static collage_three.2.image_path %}" alt="{{ collage_three.2.title }}" class="w-full h-full object-cover" loading="lazy" />
+              </figure>
+            {% endif %}
+
+            {% if featured %}
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[68%] aspect-[4/5]">
+                <figure class="block w-full h-full rounded-2xl overflow-hidden ring-1 ring-black/5 bg-white shadow-[0_30px_70px_-20px_rgba(31,28,26,0.45)] relative"
+                        data-float="0.85">
+                  <img src="{% static featured.image_path %}" alt="{{ featured.title }}" class="w-full h-full object-cover" loading="eager" />
+                  <figcaption class="absolute left-3 bottom-3 right-3 flex items-end justify-between gap-2 pointer-events-none">
+                    <div class="bg-white/90 backdrop-blur px-3 py-2 rounded-md ring-1 ring-black/5 max-w-[78%]">
+                      <div class="text-[0.6rem] tracking-[0.18em] uppercase text-rose-deep font-semibold">Now featuring</div>
+                      <div class="font-display text-base leading-tight">{{ featured.title }}</div>
+                    </div>
+                    <span class="shrink-0 inline-flex items-center justify-center size-9 rounded-full bg-ink text-cream text-sm">★</span>
+                  </figcaption>
+                </figure>
+              </div>
+
+              <div class="absolute -top-4 -right-2 lg:-right-4 rotate-[8deg] bg-cream ring-1 ring-rose/30 px-3 py-1.5 rounded-full shadow-md" data-float="-0.6">
+                <span class="text-[0.65rem] tracking-[0.18em] uppercase text-rose-deep font-semibold">Hand-picked</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div data-reveal class="mt-8 flex items-center justify-center gap-2 text-[0.7rem] tracking-[0.2em] uppercase text-muted">
+            <span class="block w-6 h-px bg-muted"></span>
+            <span>Scroll to wander</span>
+            <span class="block w-6 h-px bg-muted"></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  {# ──────────── MARQUEE ──────────── #}
+  <div class="marquee relative border-y border-black/10 bg-gradient-to-r from-sand via-peach to-blush overflow-hidden py-4">
+    <div class="pointer-events-none absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-sand to-transparent z-10"></div>
+    <div class="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-blush to-transparent z-10"></div>
+    <div class="marquee-track flex gap-10 whitespace-nowrap pl-10 will-change-transform">
+      {% for term in marquee_terms %}
+        <span class="inline-flex items-center gap-3 font-display italic text-2xl lg:text-3xl text-ink">
+          <span class="size-1.5 rounded-full bg-rose"></span>{{ term }}
+        </span>
+      {% endfor %}
+      {% for term in marquee_terms %}
+        <span class="inline-flex items-center gap-3 font-display italic text-2xl lg:text-3xl text-ink">
+          <span class="size-1.5 rounded-full bg-rose"></span>{{ term }}
+        </span>
+      {% endfor %}
     </div>
   </div>
-</section>
+
+  {# ──────────── PINNED HORIZONTAL SCROLL WALL ──────────── #}
+  {% if wall_artworks %}
+  <section class="relative bg-gradient-to-b from-paper to-cream" aria-labelledby="wallHeading">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] pt-20 lg:pt-28 pb-10">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-2xl">
+          <div data-reveal class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-medium">Chapter 02 · A guided walk</div>
+          <h2 data-reveal id="wallHeading" class="font-display text-4xl lg:text-6xl mt-3 tracking-[-0.025em] leading-[1.02]">
+            Scroll the wall,
+            <span class="italic text-rose-deep">piece by piece.</span>
+          </h2>
+        </div>
+        <p data-reveal class="text-sm font-serif italic text-muted max-w-sm">
+          Keep scrolling. The wall slides past — no horizontal scrollbar in sight.
+        </p>
+      </div>
+    </div>
+
+    <div class="scroll-wall" id="scrollWall">
+      <div class="scroll-wall-track" id="scrollWallTrack">
+        {% for art in wall_artworks %}
+          <a href="{% url 'pages:gallery' %}" class="scroll-wall-card group ring-1 ring-black/5">
+            <span class="absolute top-3 left-3 z-10 inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-cream/90 backdrop-blur text-[0.62rem] tracking-[0.16em] uppercase text-ink-soft">
+              <span class="size-1.5 rounded-full bg-rose"></span>{{ forloop.counter|stringformat:"02d" }} / {{ wall_artworks|length|stringformat:"02d" }}
+            </span>
+            <img src="{% static art.image_path %}" alt="{{ art.title }}" loading="lazy" />
+            <div class="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/70 via-black/20 to-transparent text-cream">
+              <div class="font-display text-xl lg:text-2xl leading-tight">{{ art.title }}</div>
+              <div class="text-[0.65rem] tracking-[0.16em] uppercase text-cream/80 mt-1">
+                {% if art.category %}{{ art.category.name }}{% endif %}
+                {% if art.artist %} · {{ art.artist.name }}{% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        <a href="{% url 'pages:gallery' %}"
+           class="scroll-wall-card flex flex-col items-center justify-center text-center gap-3 border border-dashed border-rose/40 bg-gradient-to-br from-cream to-blush hover:from-cream hover:to-peach transition-colors">
+          <span class="text-[0.65rem] tracking-[0.18em] uppercase text-muted">End of the walk</span>
+          <span class="font-display italic text-3xl lg:text-4xl text-rose-deep leading-tight">See every<br/>piece in the gallery</span>
+          <span aria-hidden="true" class="mt-2 inline-flex items-center gap-2 text-rose">
+            Open the gallery <span class="text-xl">→</span>
+          </span>
+        </a>
+      </div>
+
+      {# progress bar that follows pin #}
+      <div class="absolute left-0 right-0 bottom-0 h-1 bg-black/5">
+        <div class="h-full bg-gradient-to-r from-rose to-rose-deep origin-left scale-x-0" id="wallProgress"></div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ──────────── BENTO GRID ──────────── #}
+  {% if bento_artworks %}
+  <section class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] pt-20 lg:pt-28 pb-16" aria-labelledby="bentoHeading">
+    <div class="flex flex-wrap items-end justify-between gap-6 mb-10 lg:mb-14">
+      <div class="max-w-2xl">
+        <div data-reveal class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-medium">Chapter 03 · Saved corners</div>
+        <h2 data-reveal id="bentoHeading" class="font-display text-4xl lg:text-6xl mt-3 tracking-[-0.025em] leading-[1.02]">
+          Pieces we keep
+          <span class="italic text-rose-deep">coming back to.</span>
+        </h2>
+      </div>
+      <a href="{% url 'pages:gallery' %}" data-magnetic
+         class="magnetic group text-sm font-medium tracking-wide text-ink border-b border-ink/50 pb-0.5 hover:text-rose-deep hover:border-rose-deep transition-colors">
+        <span class="inline-flex items-center gap-2">
+          Open the full gallery
+          <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 lg:gap-4 auto-rows-[160px] md:auto-rows-[180px] lg:auto-rows-[200px]">
+      {% for art in bento_artworks %}
+        {% if forloop.counter == 1 %}
+          <a href="{% url 'pages:gallery' %}" data-tilt data-tilt-max="6" data-tilt-glare data-tilt-max-glare="0.15" data-bento
+             class="group relative col-span-2 row-span-2 overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
+            <img src="{% static art.image_path %}" alt="{{ art.title }}" class="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
+            <div class="absolute left-5 bottom-5 right-5 text-cream">
+              <span class="inline-block text-[0.6rem] tracking-[0.18em] uppercase font-medium bg-cream/15 backdrop-blur px-2 py-1 rounded-full">
+                {% if art.category %}{{ art.category.name }}{% else %}Featured{% endif %}
+              </span>
+              <h3 class="mt-3 font-display text-3xl lg:text-4xl leading-tight">{{ art.title }}</h3>
+              {% if art.description %}
+                <p class="mt-1 text-sm text-cream/80 max-w-md line-clamp-2">{{ art.description }}</p>
+              {% endif %}
+            </div>
+          </a>
+        {% elif forloop.counter == 4 %}
+          <a href="{% url 'pages:gallery' %}" data-tilt data-tilt-max="8" data-bento
+             class="group relative row-span-2 overflow-hidden rounded-2xl ring-1 ring-black/5 bg-white">
+            <img src="{% static art.image_path %}" alt="{{ art.title }}" class="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent"></div>
+            <div class="absolute left-3.5 bottom-3.5 right-3.5 text-cream">
+              <h3 class="font-display text-xl leading-tight">{{ art.title }}</h3>
+              <span class="text-[0.62rem] tracking-[0.18em] uppercase text-cream/70">
+                {% if art.category %}{{ art.category.name }}{% endif %}
+              </span>
+            </div>
+          </a>
+        {% else %}
+          <a href="{% url 'pages:gallery' %}" data-tilt data-tilt-max="10" data-bento
+             class="group relative overflow-hidden rounded-xl ring-1 ring-black/5 bg-white">
+            <img src="{% static art.image_path %}" alt="{{ art.title }}" class="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute left-3 bottom-3 right-3 text-cream translate-y-1 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition">
+              <div class="font-display text-base leading-tight">{{ art.title }}</div>
+              <div class="text-[0.6rem] tracking-[0.16em] uppercase text-cream/75">
+                {% if art.category %}{{ art.category.name }}{% endif %}
+              </div>
+            </div>
+          </a>
+        {% endif %}
+      {% endfor %}
+      <a href="{% url 'pages:gallery' %}" data-bento
+         class="group relative flex flex-col items-center justify-center text-center gap-2 rounded-xl border border-dashed border-rose/40 bg-gradient-to-br from-white to-blush p-5 hover:border-rose hover:from-cream hover:to-peach transition-colors">
+        <span class="font-display text-2xl italic text-rose-deep leading-tight">See every<br/>piece</span>
+        <span class="text-[0.62rem] tracking-[0.18em] uppercase text-muted">Full gallery</span>
+        <span aria-hidden="true" class="text-rose text-xl transition-transform group-hover:translate-x-1">→</span>
+      </a>
+    </div>
+  </section>
+  {% endif %}
+
+  {# ──────────── ABOUT + JOURNAL TWO-UP ──────────── #}
+  <section class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-16 lg:py-24" aria-labelledby="splitHeading">
+    <h2 id="splitHeading" class="sr-only">About the studio &amp; latest journal entry</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-8">
+
+      <article data-reveal class="lg:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-cream to-paper ring-1 ring-black/5 p-7 lg:p-9 flex flex-col">
+        <div class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-medium">About the studio</div>
+        <h3 class="mt-3 font-display text-3xl lg:text-4xl leading-[1.05] tracking-[-0.02em]">
+          A two-person bench, <span class="italic text-rose-deep">a slow eye.</span>
+        </h3>
+        <p class="mt-5 font-serif text-[0.98rem] leading-relaxed text-ink-soft">
+          We sketch in the morning, paint into the afternoon, and post when
+          something feels honest. The wall changes a little every week.
+        </p>
+        <div class="mt-auto pt-7 flex items-center justify-between">
+          <a href="{% url 'pages:about' %}" data-magnetic
+             class="magnetic group text-sm font-medium tracking-wide border-b border-ink/50 pb-0.5 hover:text-rose-deep hover:border-rose-deep transition-colors">
+            <span class="inline-flex items-center gap-2">
+              Read more about us
+              <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+            </span>
+          </a>
+          <span class="font-display italic text-rose-deep/40 text-7xl leading-none">“</span>
+        </div>
+      </article>
+
+      {% if latest_post %}
+      <article data-reveal class="lg:col-span-3 relative overflow-hidden rounded-3xl bg-ink text-cream p-7 lg:p-10">
+        <div class="absolute -right-8 -top-12 font-display text-[18rem] leading-none text-cream/[0.04]" aria-hidden="true">¶</div>
+        <div class="relative">
+          <div class="text-[0.7rem] tracking-[0.22em] uppercase text-cream/60 font-medium">Chapter 04 · From the journal</div>
+          <h3 class="mt-3 font-display text-3xl lg:text-5xl leading-[1.03] tracking-[-0.02em]">{{ latest_post.title }}</h3>
+          <div class="mt-3 flex flex-wrap gap-2 text-[0.7rem] tracking-[0.14em] uppercase text-cream/55">
+            <span>{{ latest_post.post_date|date:"M j, Y" }}</span>
+            {% if latest_post.artist %}<span>·</span><span>{{ latest_post.artist.name }}</span>{% endif %}
+            <span>·</span><span>Latest entry</span>
+          </div>
+          {% if latest_post.content %}
+            <p class="mt-6 font-serif text-base lg:text-lg leading-relaxed text-cream/85">
+              <span class="float-left mr-3 font-display text-[4.5rem] leading-[0.85] text-rose">{{ latest_post.content|slice:":1" }}</span>{{ latest_post.content|slice:"1:340" }}{% if latest_post.content|length > 340 %}…{% endif %}
+            </p>
+          {% endif %}
+          <div class="clear-both"></div>
+          <a href="{% url 'pages:inspiration' %}" data-magnetic
+             class="magnetic group mt-8 text-sm font-medium tracking-wide border-b border-cream/50 pb-0.5 hover:text-rose hover:border-rose transition-colors">
+            <span class="inline-flex items-center gap-2">
+              Continue reading <span aria-hidden="true">→</span>
+            </span>
+          </a>
+        </div>
+      </article>
+      {% endif %}
+
+    </div>
+  </section>
+
+  {# ──────────── DARK CLOSER ──────────── #}
+  <section class="relative overflow-hidden bg-gradient-to-br from-[#1a1715] via-[#2a201f] to-[#3a2125] text-cream">
+    <div class="pointer-events-none absolute -top-20 -left-10 size-[420px] rounded-full bg-rose/15 blur-3xl" data-parallax="0.3"></div>
+    <div class="pointer-events-none absolute -bottom-24 -right-16 size-[480px] rounded-full bg-blush/10 blur-3xl" data-parallax="-0.25"></div>
+
+    <div class="relative mx-auto max-w-3xl px-[clamp(18px,4vw,42px)] py-24 lg:py-32 text-center">
+      <div data-reveal class="text-[0.7rem] tracking-[0.24em] uppercase text-cream/55 font-medium">Closing thought</div>
+      <p data-reveal class="mt-6 font-display italic text-3xl sm:text-4xl lg:text-5xl leading-[1.2] text-cream">
+        “Pictures that ask a question are better company than the ones with answers.”
+      </p>
+      <div data-reveal class="mt-12 flex flex-wrap justify-center gap-4">
+        <a href="{% url 'pages:gallery' %}" data-magnetic
+           class="magnetic group rounded-full bg-cream text-ink px-7 py-3.5 text-sm font-medium tracking-wide hover:bg-rose hover:text-cream transition-colors">
+          <span class="inline-flex items-center gap-3">
+            Browse the gallery
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-1">→</span>
+          </span>
+        </a>
+        <a href="{% url 'pages:inspiration' %}" data-magnetic
+           class="magnetic rounded-full ring-1 ring-cream/40 px-7 py-3.5 text-sm font-medium tracking-wide hover:bg-cream/10 transition-colors">
+          <span>Read the journal</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  const ready = (fn) => {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  };
+
+  // Wait until libs load (they are deferred). Poll briefly, then run.
+  function whenReady(cb, attempts = 80) {
+    if (window.gsap && window.ScrollTrigger) return cb();
+    if (attempts <= 0) return cb(); // proceed even if some failed
+    setTimeout(() => whenReady(cb, attempts - 1), 50);
+  }
+
+  ready(() => whenReady(initHome));
+
+  function initHome() {
+    document.documentElement.classList.add("js-loaded");
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* ───── Lenis (global) + GSAP ticker — one driver, no double raf ───── */
+    if (!reduce && window.__lenis && window.__lenisConnectGsap && window.gsap && window.ScrollTrigger) {
+      window.__lenisConnectGsap(window.gsap, window.ScrollTrigger);
+    }
+
+    if (!window.gsap) return; // graceful: page still works statically
+    gsap.registerPlugin(window.ScrollTrigger);
+
+    /* ───── Hero headline mask reveal ───── */
+    gsap.fromTo(
+      "[data-reveal-line]",
+      { yPercent: 110 },
+      {
+        yPercent: 0,
+        duration: 1.1,
+        ease: "power3.out",
+        stagger: 0.12,
+        delay: 0.15,
+        onComplete: () => {
+          // Drop overflow:hidden so italic descenders aren't clipped post-reveal
+          document.querySelectorAll(".mask-line").forEach((el) => el.classList.add("mask-line--shown"));
+        },
+      }
+    );
+
+    /* ───── Generic reveal-on-scroll ───── */
+    gsap.utils.toArray("[data-reveal]").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        }
+      );
+    });
+
+    /* ───── Mouse parallax in hero stack ───── */
+    const heroStack = document.getElementById("heroStack");
+    if (heroStack && !reduce) {
+      const floats = heroStack.querySelectorAll("[data-float]");
+      const setters = Array.from(floats).map((el) => ({
+        el,
+        depth: parseFloat(el.dataset.float || "0.3"),
+        x: gsap.quickTo(el, "x", { duration: 0.6, ease: "power3.out" }),
+        y: gsap.quickTo(el, "y", { duration: 0.6, ease: "power3.out" }),
+      }));
+      heroStack.addEventListener("mousemove", (e) => {
+        const rect = heroStack.getBoundingClientRect();
+        const cx = (e.clientX - rect.left) / rect.width - 0.5;
+        const cy = (e.clientY - rect.top) / rect.height - 0.5;
+        setters.forEach((s) => {
+          s.x(cx * 30 * s.depth);
+          s.y(cy * 30 * s.depth);
+        });
+      });
+      heroStack.addEventListener("mouseleave", () => {
+        setters.forEach((s) => { s.x(0); s.y(0); });
+      });
+    }
+
+    /* ───── Background-blob scroll parallax ───── */
+    if (window.ScrollTrigger && !reduce) {
+      gsap.utils.toArray("[data-parallax]").forEach((el) => {
+        const depth = parseFloat(el.dataset.parallax || "0.2");
+        gsap.to(el, {
+          yPercent: depth * 30,
+          ease: "none",
+          scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+        });
+      });
+    }
+
+    /* ───── Animated counters ───── */
+    gsap.utils.toArray("[data-counter]").forEach((el) => {
+      const target = parseInt(el.dataset.counter, 10) || 0;
+      const obj = { v: 0 };
+      gsap.to(obj, {
+        v: target,
+        duration: 1.4,
+        ease: "power2.out",
+        scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        onUpdate: () => { el.textContent = Math.round(obj.v); },
+      });
+    });
+
+    /* ───── Pinned horizontal "scroll the wall" ───── */
+    const wall = document.getElementById("scrollWall");
+    const track = document.getElementById("scrollWallTrack");
+    const progress = document.getElementById("wallProgress");
+    if (wall && track && window.ScrollTrigger) {
+      const computeDistance = () => Math.max(0, track.scrollWidth - window.innerWidth + 80);
+
+      gsap.to(track, {
+        x: () => -computeDistance(),
+        ease: "none",
+        scrollTrigger: {
+          trigger: wall,
+          pin: true,
+          start: "top top",
+          end: () => "+=" + computeDistance(),
+          scrub: 0.6,
+          invalidateOnRefresh: true,
+          onUpdate: (self) => {
+            if (progress) progress.style.transform = `scaleX(${self.progress})`;
+          },
+        },
+      });
+
+      // Subtle fade-up of each card as it enters viewport (initial only)
+      gsap.utils.toArray(".scroll-wall-card").forEach((card, i) => {
+        gsap.from(card, {
+          opacity: 0,
+          y: 40,
+          duration: 0.8,
+          ease: "power2.out",
+          delay: i * 0.04,
+          scrollTrigger: { trigger: wall, start: "top 80%", once: true },
+        });
+      });
+    }
+
+    /* ───── vanilla-tilt on bento + featured ───── */
+    if (window.VanillaTilt) {
+      VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+        max: 8, speed: 600, glare: false, "max-glare": 0.15, scale: 1.01,
+      });
+    }
+
+    /* ───── Bento reveal stagger ───── */
+    gsap.utils.toArray("[data-bento]").forEach((card, i) => {
+      gsap.from(card, {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        ease: "power2.out",
+        delay: (i % 4) * 0.06,
+        scrollTrigger: { trigger: card, start: "top 92%", once: true },
+      });
+    });
+
+    /* ───── Magnetic CTAs ───── */
+    if (!reduce) {
+      document.querySelectorAll("[data-magnetic]").forEach((wrap) => {
+        const inner = wrap.firstElementChild || wrap;
+        const setX = gsap.quickTo(inner, "x", { duration: 0.5, ease: "power3.out" });
+        const setY = gsap.quickTo(inner, "y", { duration: 0.5, ease: "power3.out" });
+        wrap.addEventListener("mousemove", (e) => {
+          const r = wrap.getBoundingClientRect();
+          const x = e.clientX - r.left - r.width / 2;
+          const y = e.clientY - r.top - r.height / 2;
+          setX(x * 0.35); setY(y * 0.35);
+        });
+        wrap.addEventListener("mouseleave", () => { setX(0); setY(0); });
+      });
+    }
+
+    /* ───── Custom dot cursor ───── */
+    const dot = document.getElementById("dotCursor");
+    if (dot && matchMedia("(hover: hover)").matches) {
+      const setX = gsap.quickTo(dot, "x", { duration: 0.18, ease: "power3.out" });
+      const setY = gsap.quickTo(dot, "y", { duration: 0.18, ease: "power3.out" });
+      window.addEventListener("mousemove", (e) => {
+        dot.classList.add("visible");
+        setX(e.clientX); setY(e.clientY);
+      });
+      window.addEventListener("mouseleave", () => dot.classList.remove("visible"));
+
+      const hoverables = "a, button, [data-magnetic], [data-tilt], .scroll-wall-card";
+      document.querySelectorAll(hoverables).forEach((el) => {
+        el.addEventListener("mouseenter", () => dot.classList.add("hover"));
+        el.addEventListener("mouseleave", () => dot.classList.remove("hover"));
+      });
+    }
+
+    // Re-measure after fonts/images load (counters + pinned distance)
+    window.addEventListener("load", () => {
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+  }
+})();
+</script>
 {% endblock %}

@@ -84,7 +84,7 @@ def dashboard_home(request):
 @staff_required
 def artist_list(request):
     artists = Artist.objects.annotate(
-        _works=Count("artworks"), _posts=Count("posts")
+        artwork_count=Count("artworks"), post_count=Count("posts")
     ).order_by("name")
     return render(
         request,
@@ -142,7 +142,9 @@ def artist_delete(request, pk):
 
 @staff_required
 def category_list(request):
-    categories = Category.objects.annotate(_n=Count("artworks")).order_by("name")
+    categories = Category.objects.annotate(artwork_count=Count("artworks")).order_by(
+        "name"
+    )
     form = CategoryForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         form.save()

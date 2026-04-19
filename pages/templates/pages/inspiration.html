@@ -4,7 +4,7 @@
 
 {% block content %}
 <header class="page-intro">
-  <span class="eyebrow">Notes from the studio</span>
+  <span class="eyebrow eyebrow--soft">Notes from the studio</span>
   <h1>Inspiration</h1>
   <p class="page-intro__lede">
     Short posts stored in the database—ideas, rituals, and experiments worth revisiting.
@@ -19,7 +19,7 @@
       <p class="post-card__content">{{ post.content|truncatewords:48 }}</p>
     </article>
   {% empty %}
-    <p class="empty-state">No posts yet. Staff can add them from the <a href="{% url 'dashboard:login' %}">dashboard</a>.</p>
+    <p class="empty-state">No posts yet. Content is managed through the staff dashboard.</p>
   {% endfor %}
 </div>
 {% endblock %}

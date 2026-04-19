@@ -5,15 +5,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fabiola Morcillo - Artworks</title>
+  {% include "partials/fonts_public.html" %}
   <link rel="stylesheet" href="{% static 'pages/styles.css' %}" />
 </head>
 <body>
   <div class="page-shell">
     <header class="site-header">
-      <div class="brand">
-        <span class="brand-mark">R</span>
-        <span class="brand-name">RAPID PROJECT</span>
-      </div>
+      <a href="{% url 'pages:home' %}" class="brand brand-link">
+        <span class="brand-mark">S</span>
+        <span class="brand-name">Studio Radiance</span>
+      </a>
       <nav class="site-nav">
         <a href="{% url 'pages:home' %}">Home</a>
         <a href="{% url 'pages:about' %}">About</a>

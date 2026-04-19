@@ -1,45 +1,419 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}About – Studio Radiance{% endblock %}
+{% block title %}About — Studio Radiance{% endblock %}
+
+{% block body_class %}about-tw{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: "#fffbf7", paper: "#faf6f1", paper2: "#f0e8e0",
+          blush: "#fdeef2", peach: "#fbe8ec", sand: "#f9efe2",
+          ink: "#1f1c1a", "ink-soft": "#454039", muted: "#6e665e",
+          rose: "#c45b6e", "rose-deep": "#9e3d52",
+        },
+        fontFamily: {
+          display: ['"Cormorant Garamond"', "Georgia", "serif"],
+          serif:   ['"Newsreader"', "Georgia", "serif"],
+          sans:    ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+        },
+        maxWidth: { shell: "1180px" },
+      },
+    },
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<style>
+  /* One continuous “paper studio” field: nav strip + shell gap + hero share the same wash */
+  body.about-tw {
+    overflow-x: clip;
+    background-color: #fffbf7;
+    background-image:
+      radial-gradient(ellipse 95% 75% at 92% -5%, rgba(253, 238, 242, 0.4), transparent 52%),
+      radial-gradient(ellipse 65% 55% at 0% 18%, rgba(255, 245, 232, 0.5), transparent 48%),
+      linear-gradient(180deg, #fffbf7 0%, #faf6f1 38%, #faf6f1 68%, #f7f2ec 100%);
+  }
+
+  body.about-tw::before {
+    opacity: 0.2;
+  }
+
+  /* Nav bar uses global .site-header-wrap styles only — same on every page */
+
+  body.about-tw .page-shell {
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+    background: transparent;
+  }
+
+  body.about-tw .site-main {
+    background: transparent;
+  }
+  body.about-tw .site-header-inner,
+  body.about-tw .flash-messages,
+  body.about-tw .site-footer {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 42px);
+  }
+  body.about-tw .site-main { min-height: auto; }
+  html.hjs-about [data-about-reveal] { opacity: 0; transform: translateY(32px); }
+  html.hjs-about [data-about-reveal-hero] { opacity: 0; transform: translateY(20px); }
+</style>
+<script>document.documentElement.classList.add("hjs-about");</script>
+{% endblock %}
 
 {% block content %}
-<article class="content-page">
-  <header class="content-page__header">
-    <span class="eyebrow">Behind the work</span>
-    <h1>About the artist</h1>
-  </header>
-  <div class="about-grid">
-    <div class="about-copy">
-      <p>
-        Studio Radiance is a digital art practice focused on emotional clarity—each piece
-        balances structure with playful color so the viewer can rest inside the frame for a moment.
-      </p>
-      <h2>Creative inspiration</h2>
-      <p>
-        Inspiration comes from late-night city light, album cover typography, and the way
-        paper textures meet crisp vector edges. Film stills and music videos often provide
-        the first thumbnail of a composition before any brush hits the canvas.
-      </p>
-      <h2>Artistic style</h2>
-      <p>
-        The work sits between <strong>modern illustration</strong> and <strong>abstract atmosphere</strong>:
-        simplified shapes, generous negative space, and a minimalist layout that still feels warm.
-      </p>
-      <p class="about-cta">
-        <a class="nav-button" href="{% url 'pages:legacy_showcase' %}">Artist spotlight pages</a>
-      </p>
-    </div>
-    <div class="about-visual">
-      <div class="image-frame image-frame--about">
-        <img
-          src="{% static 'ValentinGambar.jpg' %}"
-          alt="Artist mood board"
-          width="480"
-          height="540"
-        />
+<div class="font-sans text-ink">
+
+  {# ── Hero: warm, light, image-first — no dark slab ── #}
+  <section class="relative overflow-hidden bg-transparent pt-10 pb-16 lg:pt-16 lg:pb-24" aria-labelledby="about-hero-title">
+    <div class="pointer-events-none absolute -top-24 right-[-10%] size-[min(85vw,480px)] rounded-full bg-blush/50 blur-[100px]"></div>
+    <div class="pointer-events-none absolute bottom-0 left-[-15%] size-[min(70vw,360px)] rounded-full bg-peach/40 blur-[90px]"></div>
+    <div class="pointer-events-none absolute inset-0 opacity-[0.35]"
+         style="background-image: radial-gradient(rgba(31,28,26,0.04) 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+        {# Copy first on mobile; image leads on large screens #}
+        <div class="lg:col-span-5 order-2 lg:order-1 lg:pr-4">
+          <p data-about-reveal-hero class="text-[0.68rem] tracking-[0.26em] uppercase text-muted font-semibold">
+            Studio Radiance
+          </p>
+          <h1 id="about-hero-title" data-about-reveal-hero class="mt-5 font-display font-medium text-ink leading-[1.02] tracking-[-0.035em] text-[clamp(2.4rem,6vw,4.25rem)]">
+            About the artist — <span class="italic text-rose-deep">slowly, on purpose.</span>
+          </h1>
+          <p data-about-reveal-hero class="mt-6 font-serif text-[1.05rem] lg:text-[1.12rem] leading-relaxed text-ink-soft max-w-md">
+            A digital art practice about emotional clarity: structure, playful colour,
+            and a little room to breathe inside the frame.
+          </p>
+          <div data-about-reveal-hero class="mt-8 flex flex-wrap items-center gap-4">
+            <a href="{% url 'pages:gallery' %}"
+               class="inline-flex items-center gap-2 rounded-full bg-ink text-cream px-6 py-3 text-sm font-medium tracking-wide hover:bg-rose-deep transition-colors">
+              View the gallery <span aria-hidden="true">→</span>
+            </a>
+            <a href="{% url 'pages:inspiration' %}"
+               class="text-sm font-medium tracking-wide text-ink border-b border-ink/35 pb-0.5 hover:text-rose-deep hover:border-rose-deep transition-colors">
+              Read the journal
+            </a>
+          </div>
+        </div>
+
+        <div class="lg:col-span-7 order-1 lg:order-2">
+          <div class="relative mx-auto max-w-xl lg:max-w-none" id="aboutHeroVisual">
+            <div class="relative rounded-[1.75rem] lg:rounded-[2rem] overflow-hidden ring-1 ring-black/[0.07] shadow-[0_28px_70px_-28px_rgba(47,40,36,0.28)] bg-white">
+              <img src="{% static 'ValentinGambar.jpg' %}"
+                   alt="Work sample — colour and rhythm"
+                   class="w-full aspect-[5/4] sm:aspect-[16/10] lg:aspect-[5/4] object-cover"
+                   width="960" height="640" loading="eager" />
+              <div class="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent pointer-events-none"></div>
+              <p class="absolute bottom-4 left-4 right-4 font-serif text-sm text-cream/95 italic drop-shadow-sm max-w-lg">
+                First impressions should feel like daylight on paper — not a closed door.
+              </p>
+            </div>
+            <figure class="absolute -bottom-5 -left-2 sm:-left-4 w-[38%] max-w-[200px] aspect-[3/4] rounded-xl overflow-hidden ring-4 ring-cream shadow-lg bg-white hidden sm:block"
+                    data-float="0.55">
+              <img src="{% static 'FabiolaGambar1.jpg' %}" alt="Secondary work sample — soft light" class="size-full object-cover" loading="lazy" />
+            </figure>
+            <div class="absolute -top-3 -right-1 sm:-right-3 rounded-full bg-cream/95 backdrop-blur px-3 py-1.5 ring-1 ring-rose/20 text-[0.62rem] tracking-[0.16em] uppercase text-rose-deep font-semibold shadow-sm hidden sm:inline-flex"
+                 data-float="-0.4">
+              Open studio
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
+  </section>
+
+  {# ── Soft bridge into the rest (no heavy band) ── #}
+  <div class="relative border-t border-black/[0.06] bg-paper/80 py-6 text-center">
+    <p class="font-serif text-sm italic text-muted max-w-2xl mx-auto px-6">
+      What follows is the longer read — mood boards, chapters, and how the work is put together.
+    </p>
   </div>
-</article>
+
+  {# ── Main dossier: sticky visuals + scrolling chapters ── #}
+  <section class="relative bg-gradient-to-b from-paper via-cream to-paper py-20 lg:py-28" aria-labelledby="about-story-title">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-16 items-start">
+
+        {# Sticky visual column #}
+        <div class="lg:col-span-5 lg:sticky lg:top-28 self-start order-2 lg:order-1">
+          <div class="relative mx-auto max-w-md lg:max-w-none aspect-[4/5] lg:aspect-auto lg:min-h-[520px]" id="aboutVisualStack">
+            <div class="absolute inset-0 rounded-[28px] bg-gradient-to-br from-rose/15 via-blush to-sand rotate-[-2deg] scale-[1.02]"></div>
+
+            <figure class="absolute left-0 top-4 w-[58%] aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-black/10 shadow-[0_24px_50px_-20px_rgba(31,28,26,0.35)] rotate-[-8deg] bg-white"
+                    data-float="0.45">
+              <img src="{% static 'ValentinGambar.jpg' %}" alt="Studio mood — colour and rhythm" class="size-full object-cover" loading="lazy" />
+            </figure>
+            <figure class="absolute right-0 bottom-8 w-[56%] aspect-[3/4] rounded-2xl overflow-hidden ring-1 ring-black/10 shadow-[0_24px_50px_-20px_rgba(31,28,26,0.35)] rotate-[7deg] bg-white"
+                    data-float="-0.35">
+              <img src="{% static 'FabiolaGambar1.jpg' %}" alt="Studio mood — soft light" class="size-full object-cover" loading="lazy" />
+            </figure>
+
+            <div class="absolute -right-1 top-1/2 -translate-y-1/2 translate-x-1/4 hidden xl:flex flex-col gap-1 bg-cream/95 backdrop-blur px-3 py-2 rounded-md ring-1 ring-rose/25 shadow-lg rotate-[3deg] max-w-[140px]"
+                 data-float="0.55">
+              <span class="text-[0.55rem] tracking-[0.2em] uppercase text-rose-deep font-semibold">Note</span>
+              <span class="font-serif text-xs leading-snug text-ink-soft italic">Nothing here is rushed on purpose.</span>
+            </div>
+          </div>
+        </div>
+
+        {# Story chapters #}
+        <div class="lg:col-span-7 space-y-20 lg:space-y-28 order-1 lg:order-2">
+          <header data-about-reveal>
+            <h2 id="about-story-title" class="font-display text-4xl lg:text-5xl tracking-[-0.03em] leading-[1.05]">
+              The story <span class="italic text-rose-deep">behind the work</span>
+            </h2>
+            <p class="mt-5 font-serif text-[1.05rem] leading-relaxed text-ink-soft max-w-prose">
+              Studio Radiance is a digital art practice focused on emotional clarity—each piece
+              balances structure with playful colour so you can rest inside the frame for a moment.
+            </p>
+          </header>
+
+          <div class="relative pl-0 lg:pl-8 border-l-0 lg:border-l-2 border-rose/25" data-about-reveal>
+            <span class="hidden lg:inline-flex absolute -left-[11px] top-0 size-5 rounded-full bg-rose ring-4 ring-cream"></span>
+            <span class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-semibold">Chapter A</span>
+            <h3 class="mt-2 font-display text-3xl lg:text-4xl">Creative inspiration</h3>
+            <p class="mt-4 font-serif text-[1.02rem] leading-relaxed text-ink-soft max-w-prose">
+              Inspiration comes from late-night city light, album cover typography, and the way
+              paper textures meet crisp vector edges. Film stills and music videos often provide
+              the first thumbnail of a composition before any brush hits the canvas.
+            </p>
+          </div>
+
+          <div class="relative pl-0 lg:pl-8 border-l-0 lg:border-l-2 border-rose/25" data-about-reveal>
+            <span class="hidden lg:inline-flex absolute -left-[11px] top-0 size-5 rounded-full bg-rose ring-4 ring-cream"></span>
+            <span class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-semibold">Chapter B</span>
+            <h3 class="mt-2 font-display text-3xl lg:text-4xl">Artistic style</h3>
+            <p class="mt-4 font-serif text-[1.02rem] leading-relaxed text-ink-soft max-w-prose">
+              The work sits between <strong class="font-semibold text-ink">modern illustration</strong> and
+              <strong class="font-semibold text-ink">abstract atmosphere</strong>: simplified shapes,
+              generous negative space, and a minimalist layout that still feels warm.
+            </p>
+          </div>
+
+          <figure class="overflow-hidden rounded-2xl ring-1 ring-black/8 shadow-lg max-w-lg" data-about-reveal>
+            <img src="{% static 'BillyGambar.jpg' %}" alt="Detail — narrative contrast in the work" class="w-full aspect-[16/10] object-cover" loading="lazy" />
+            <figcaption class="px-4 py-3 bg-paper font-serif text-sm italic text-muted">
+              A corner of the wall where surreal meets graphic.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# ── Signal row: three “sources” ── #}
+  <section class="border-y border-black/10 bg-paper py-16 lg:py-20" aria-labelledby="signals-heading">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
+      <h2 id="signals-heading" class="sr-only">What feeds the work</h2>
+      <p class="text-[0.7rem] tracking-[0.22em] uppercase text-muted font-semibold text-center mb-10" data-about-reveal>Signals we listen to</p>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-8">
+        <article data-about-reveal class="group relative rounded-2xl bg-cream p-7 ring-1 ring-black/6 shadow-sm hover:shadow-[0_20px_50px_-24px_rgba(196,91,110,0.25)] hover:-translate-y-1 transition-all duration-300">
+          <span class="font-display text-5xl text-rose-deep/20 group-hover:text-rose-deep/35 transition-colors" aria-hidden="true">01</span>
+          <h3 class="mt-2 font-display text-2xl">City after dark</h3>
+          <p class="mt-3 font-serif text-sm leading-relaxed text-ink-soft">Neon bleed, wet pavement, windows stacked like film frames.</p>
+        </article>
+        <article data-about-reveal class="group relative rounded-2xl bg-cream p-7 ring-1 ring-black/6 shadow-sm hover:shadow-[0_20px_50px_-24px_rgba(196,91,110,0.25)] hover:-translate-y-1 transition-all duration-300">
+          <span class="font-display text-5xl text-rose-deep/20 group-hover:text-rose-deep/35 transition-colors" aria-hidden="true">02</span>
+          <h3 class="mt-2 font-display text-2xl">Album typography</h3>
+          <p class="mt-3 font-serif text-sm leading-relaxed text-ink-soft">Tight kerning, loud silence, titles that feel like posters.</p>
+        </article>
+        <article data-about-reveal class="group relative rounded-2xl bg-cream p-7 ring-1 ring-black/6 shadow-sm hover:shadow-[0_20px_50px_-24px_rgba(196,91,110,0.25)] hover:-translate-y-1 transition-all duration-300">
+          <span class="font-display text-5xl text-rose-deep/20 group-hover:text-rose-deep/35 transition-colors" aria-hidden="true">03</span>
+          <h3 class="mt-2 font-display text-2xl">Film stills</h3>
+          <p class="mt-3 font-serif text-sm leading-relaxed text-ink-soft">Crops that cheat reality—one object, oceans of space.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  {# ── Style spectrum ── #}
+  <section class="py-20 lg:py-28 bg-gradient-to-br from-blush/40 via-cream to-sand/50" aria-labelledby="spectrum-heading">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] text-center">
+      <h2 id="spectrum-heading" class="font-display text-3xl lg:text-5xl tracking-[-0.03em]" data-about-reveal>
+        The work lives <span class="italic text-rose-deep">in between.</span>
+      </h2>
+      <div class="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10 max-w-2xl mx-auto" data-about-reveal>
+        <span class="font-display text-2xl text-muted">Modern</span>
+        <div class="relative flex-1 w-full sm:max-w-md h-px bg-gradient-to-r from-transparent via-rose to-transparent">
+          <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-3 rounded-full bg-rose ring-4 ring-cream"></span>
+        </div>
+        <span class="font-display text-2xl text-muted">Abstract</span>
+      </div>
+      <p class="mt-10 max-w-xl mx-auto font-serif text-[1.02rem] leading-relaxed text-ink-soft" data-about-reveal>
+        Neither label is a cage—each piece borrows from both until the mood feels honest.
+      </p>
+    </div>
+  </section>
+
+  {# ── Process rail ── #}
+  <section class="py-16 lg:py-24 bg-ink text-cream" aria-labelledby="process-heading">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
+      <h2 id="process-heading" class="font-display text-3xl lg:text-4xl mb-12 lg:mb-16" data-about-reveal>
+        How a piece <span class="italic text-rose">usually</span> finds its feet
+      </h2>
+      <ol class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 relative">
+        <li class="hidden md:block absolute top-8 left-[16%] right-[16%] h-px bg-cream/15" aria-hidden="true"></li>
+        <li data-about-reveal class="relative">
+          <span class="inline-flex size-10 items-center justify-center rounded-full bg-rose text-cream font-display text-xl mb-4">1</span>
+          <h3 class="font-display text-xl">Light first</h3>
+          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Block shapes before pigment. Ask where the quiet is.</p>
+        </li>
+        <li data-about-reveal class="relative">
+          <span class="inline-flex size-10 items-center justify-center rounded-full bg-cream/10 ring-1 ring-cream/30 text-cream font-display text-xl mb-4">2</span>
+          <h3 class="font-display text-xl">Shape &amp; rhythm</h3>
+          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Repeat motifs until the eye has somewhere to land.</p>
+        </li>
+        <li data-about-reveal class="relative">
+          <span class="inline-flex size-10 items-center justify-center rounded-full bg-cream/10 ring-1 ring-cream/30 text-cream font-display text-xl mb-4">3</span>
+          <h3 class="font-display text-xl">Colour last</h3>
+          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Rose, sand, ink—only as much noise as the story needs.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  {# ── CTA band ── #}
+  <section class="py-20 lg:py-24 bg-gradient-to-r from-rose-deep via-rose to-[#d47284] text-cream">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10">
+      <div data-about-reveal>
+        <p class="text-[0.7rem] tracking-[0.24em] uppercase text-cream/70 font-semibold">Still curious?</p>
+        <p class="mt-3 font-display italic text-3xl lg:text-4xl max-w-md leading-tight">
+          The spotlight pages go deeper on individual artists.
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-4 shrink-0" data-about-reveal>
+        <a href="{% url 'pages:legacy_showcase' %}"
+           class="inline-flex items-center gap-2 rounded-full bg-cream text-ink px-7 py-3.5 text-sm font-medium tracking-wide hover:bg-paper transition-colors">
+          Artist spotlights <span aria-hidden="true">→</span>
+        </a>
+        <a href="{% url 'pages:home' %}"
+           class="inline-flex items-center gap-2 rounded-full ring-2 ring-cream/50 px-7 py-3.5 text-sm font-medium tracking-wide hover:bg-cream/10 transition-colors">
+          Back home
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+  function whenGsap(cb, n) {
+    n = n || 80;
+    if (window.gsap && window.ScrollTrigger) return cb();
+    if (n <= 0) return cb();
+    setTimeout(function () { whenGsap(cb, n - 1); }, 50);
+  }
+
+  ready(function () {
+    whenGsap(initAbout);
+  });
+
+  function initAbout() {
+    if (!window.gsap || !window.ScrollTrigger) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    /* Lenis + ScrollTrigger (direct visits to /about/ before home) */
+    if (!reduce && window.__lenis && window.__lenisConnectGsap) {
+      window.__lenisConnectGsap(window.gsap, window.ScrollTrigger);
+    }
+    if (reduce) {
+      document.querySelectorAll("[data-about-reveal], [data-about-reveal-hero]").forEach(function (el) {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      return;
+    }
+
+    gsap.fromTo(
+      "[data-about-reveal-hero]",
+      { opacity: 0, y: 22 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.88,
+        ease: "power2.out",
+        stagger: 0.09,
+        delay: 0.12,
+      }
+    );
+
+    gsap.utils.toArray("[data-about-reveal]").forEach(function (el) {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 32 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.85,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        }
+      );
+    });
+
+    gsap.utils.toArray("[data-about-parallax]").forEach(function (el) {
+      var speed = parseFloat(el.dataset.speed || "0.12") || 0.12;
+      gsap.to(el, {
+        yPercent: speed * 40,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true },
+      });
+    });
+
+    function bindFloatStack(id) {
+      var stack = document.getElementById(id);
+      if (!stack || !window.gsap) return;
+      var floats = stack.querySelectorAll("[data-float]");
+      if (!floats.length) return;
+      var setters = Array.from(floats).map(function (fig) {
+        var d = parseFloat(fig.dataset.float || "0.3") || 0.3;
+        return {
+          depth: d,
+          x: gsap.quickTo(fig, "x", { duration: 0.55, ease: "power3.out" }),
+          y: gsap.quickTo(fig, "y", { duration: 0.55, ease: "power3.out" }),
+        };
+      });
+      stack.addEventListener("mousemove", function (e) {
+        var r = stack.getBoundingClientRect();
+        var cx = (e.clientX - r.left) / r.width - 0.5;
+        var cy = (e.clientY - r.top) / r.height - 0.5;
+        setters.forEach(function (s) {
+          s.x(cx * 22 * s.depth);
+          s.y(cy * 22 * s.depth);
+        });
+      });
+      stack.addEventListener("mouseleave", function () {
+        setters.forEach(function (s) { s.x(0); s.y(0); });
+      });
+    }
+    bindFloatStack("aboutHeroVisual");
+    bindFloatStack("aboutVisualStack");
+
+    window.addEventListener("load", function () {
+      ScrollTrigger.refresh();
+    });
+  }
+})();
+</script>
 {% endblock %}
