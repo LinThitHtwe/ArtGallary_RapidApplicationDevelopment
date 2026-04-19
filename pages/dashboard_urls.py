@@ -10,6 +10,11 @@ urlpatterns = [
     path("", dashboard_views.dashboard_home, name="home"),
     path("categories/", dashboard_views.category_list, name="category_list"),
     path(
+        "categories/<int:pk>/edit/",
+        dashboard_views.category_edit,
+        name="category_edit",
+    ),
+    path(
         "categories/<int:pk>/delete/",
         dashboard_views.category_delete,
         name="category_delete",

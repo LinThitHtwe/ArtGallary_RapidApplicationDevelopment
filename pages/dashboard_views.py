@@ -103,6 +103,26 @@ def category_list(request):
 
 
 @staff_required
+def category_edit(request, pk):
+    cat = get_object_or_404(Category, pk=pk)
+    if request.method != "POST":
+        return redirect("dashboard:category_list")
+    form = CategoryForm(request.POST, instance=cat)
+    if form.is_valid():
+        form.save()
+        messages.success(
+            request,
+            f"Category updated to “{form.cleaned_data['name']}”.",
+        )
+    else:
+        messages.error(
+            request,
+            "Could not update the category. Check the name and try again.",
+        )
+    return redirect("dashboard:category_list")
+
+
+@staff_required
 def category_delete(request, pk):
     cat = get_object_or_404(Category, pk=pk)
     if request.method != "POST":
