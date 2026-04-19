@@ -6,16 +6,15 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 
-from artists.models import Artist
 from blog.models import Post
 from gallery.models import Artwork, Category
 
 from .forms import (
-    ArtistForm,
     CategoryForm,
     DashboardArtworkForm,
     DashboardPostForm,
     StaffAuthenticationForm,
+    get_site_artist,
 )
 
 
@@ -59,13 +58,13 @@ class StaffLogoutView(LogoutView):
 @staff_required
 def dashboard_home(request):
     counts = {
-        "artists": Artist.objects.count(),
         "posts": Post.objects.count(),
         "artworks": Artwork.objects.count(),
         "categories": Category.objects.count(),
     }
-    recent_art = Artwork.objects.select_related("category").order_by("-id")[:6]
-    recent_posts = Post.objects.select_related("artist").order_by("-post_date")[:6]
+    recent_art = Artwork.objects.select_related("category").order_by("-id")[:8]
+    recent_posts = Post.objects.order_by("-post_date")[:6]
+    site_artist = get_site_artist()
     return render(
         request,
         "pages/dashboard/home.html",
@@ -73,67 +72,9 @@ def dashboard_home(request):
             "counts": counts,
             "recent_art": recent_art,
             "recent_posts": recent_posts,
+            "site_artist_name": site_artist.name,
             "dash_section": "overview",
         },
-    )
-
-
-# ——— Artists ———
-
-
-@staff_required
-def artist_list(request):
-    artists = Artist.objects.annotate(
-        artwork_count=Count("artworks"), post_count=Count("posts")
-    ).order_by("name")
-    return render(
-        request,
-        "pages/dashboard/artist_list.html",
-        {"artists": artists, "dash_section": "artists"},
-    )
-
-
-@staff_required
-def artist_create(request):
-    form = ArtistForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Artist created.")
-        return redirect("dashboard:artist_list")
-    return render(
-        request,
-        "pages/dashboard/artist_form.html",
-        {"form": form, "dash_section": "artists", "editing": False},
-    )
-
-
-@staff_required
-def artist_edit(request, pk):
-    artist = get_object_or_404(Artist, pk=pk)
-    form = ArtistForm(request.POST or None, instance=artist)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Artist updated.")
-        return redirect("dashboard:artist_list")
-    return render(
-        request,
-        "pages/dashboard/artist_form.html",
-        {"form": form, "artist": artist, "dash_section": "artists", "editing": True},
-    )
-
-
-@staff_required
-def artist_delete(request, pk):
-    artist = get_object_or_404(Artist, pk=pk)
-    if request.method == "POST":
-        name = artist.name
-        artist.delete()
-        messages.success(request, f"Deleted artist “{name}”.")
-        return redirect("dashboard:artist_list")
-    return render(
-        request,
-        "pages/dashboard/artist_confirm_delete.html",
-        {"artist": artist, "dash_section": "artists"},
     )
 
 
@@ -164,16 +105,12 @@ def category_list(request):
 @staff_required
 def category_delete(request, pk):
     cat = get_object_or_404(Category, pk=pk)
-    if request.method == "POST":
-        name = cat.name
-        cat.delete()
-        messages.success(request, f"Deleted category “{name}”.")
+    if request.method != "POST":
         return redirect("dashboard:category_list")
-    return render(
-        request,
-        "pages/dashboard/category_confirm_delete.html",
-        {"category": cat, "dash_section": "categories"},
-    )
+    name = cat.name
+    cat.delete()
+    messages.success(request, f"Deleted category “{name}”.")
+    return redirect("dashboard:category_list")
 
 
 # ——— Posts ———
@@ -181,7 +118,7 @@ def category_delete(request, pk):
 
 @staff_required
 def post_list(request):
-    posts = Post.objects.select_related("artist").order_by("-post_date", "-id")
+    posts = Post.objects.order_by("-post_date", "-id")
     return render(
         request,
         "pages/dashboard/post_list.html",
@@ -221,16 +158,12 @@ def post_edit(request, pk):
 @staff_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    if request.method == "POST":
-        title = post.title
-        post.delete()
-        messages.success(request, f"Removed journal entry “{title}”.")
+    if request.method != "POST":
         return redirect("dashboard:post_list")
-    return render(
-        request,
-        "pages/dashboard/post_confirm_delete.html",
-        {"post": post, "dash_section": "posts"},
-    )
+    title = post.title
+    post.delete()
+    messages.success(request, f"Removed journal entry “{title}”.")
+    return redirect("dashboard:post_list")
 
 
 # ——— Artworks ———
@@ -238,9 +171,7 @@ def post_delete(request, pk):
 
 @staff_required
 def artwork_list(request):
-    works = Artwork.objects.select_related("category", "artist").order_by(
-        "-id",
-    )
+    works = Artwork.objects.select_related("category").order_by("-id")
     return render(
         request,
         "pages/dashboard/artwork_list.html",
@@ -287,13 +218,9 @@ def artwork_edit(request, pk):
 @staff_required
 def artwork_delete(request, pk):
     artwork = get_object_or_404(Artwork, pk=pk)
-    if request.method == "POST":
-        title = artwork.title
-        artwork.delete()
-        messages.success(request, f"Deleted artwork “{title}”.")
+    if request.method != "POST":
         return redirect("dashboard:artwork_list")
-    return render(
-        request,
-        "pages/dashboard/artwork_confirm_delete.html",
-        {"artwork": artwork, "dash_section": "artworks"},
-    )
+    title = artwork.title
+    artwork.delete()
+    messages.success(request, f"Deleted artwork “{title}”.")
+    return redirect("dashboard:artwork_list")

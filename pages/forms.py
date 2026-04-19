@@ -11,6 +11,14 @@ from gallery.models import Artwork, Category
 from .utils_assets import save_uploaded_image
 
 
+def get_site_artist():
+    """Single-artist site: use the first Artist row, or create a default studio name."""
+    artist = Artist.objects.order_by("pk").first()
+    if artist:
+        return artist
+    return Artist.objects.create(name="Studio Radiance")
+
+
 class StaffAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,13 +38,6 @@ _dash = {"class": "dash-input"}
 _dash_ta = {"class": "dash-input dash-input--textarea"}
 
 
-class ArtistForm(forms.ModelForm):
-    class Meta:
-        model = Artist
-        fields = ("name",)
-        widgets = {"name": forms.TextInput(attrs=_dash)}
-
-
 class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
@@ -47,30 +48,20 @@ class CategoryForm(forms.ModelForm):
 class DashboardPostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ("title", "content", "artist", "post_date")
+        fields = ("title", "content")
         widgets = {
             "title": forms.TextInput(attrs=_dash),
             "content": forms.Textarea(attrs={**_dash_ta, "rows": 6}),
-            "artist": forms.Select(attrs=_dash),
-            "post_date": forms.DateTimeInput(
-                attrs={**_dash, "type": "datetime-local"},
-                format="%Y-%m-%dT%H:%M",
-            ),
         }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["post_date"].input_formats = (
-            "%Y-%m-%dT%H:%M",
-            "%Y-%m-%d %H:%M:%S",
-            "%Y-%m-%d %H:%M:%S%z",
-        )
-        if self.instance.pk:
-            dt = timezone.localtime(self.instance.post_date)
-            self.initial.setdefault("post_date", dt.strftime("%Y-%m-%dT%H:%M"))
-        else:
-            now = timezone.localtime(timezone.now())
-            self.initial.setdefault("post_date", now.strftime("%Y-%m-%dT%H:%M"))
+    def save(self, commit=True):
+        obj = super().save(commit=False)
+        obj.artist = get_site_artist()
+        if not obj.pk:
+            obj.post_date = timezone.now()
+        if commit:
+            obj.save()
+        return obj
 
 
 class DashboardArtworkForm(forms.ModelForm):
@@ -86,16 +77,21 @@ class DashboardArtworkForm(forms.ModelForm):
 
     class Meta:
         model = Artwork
-        fields = ("title", "description", "category", "artist")
+        fields = ("title", "description", "category")
         widgets = {
             "title": forms.TextInput(attrs=_dash),
             "description": forms.Textarea(attrs={**_dash_ta, "rows": 4}),
             "category": forms.Select(attrs=_dash),
-            "artist": forms.Select(attrs=_dash),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["image_file"].widget = forms.FileInput(
+            attrs={
+                "class": "dash-file-input",
+                "accept": ".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif",
+            }
+        )
         if self.instance.pk:
             self.fields["image_file"].help_text = (
                 "Optional — upload a new file to replace "
@@ -112,6 +108,7 @@ class DashboardArtworkForm(forms.ModelForm):
 
     def save(self, commit=True):
         obj = super().save(commit=False)
+        obj.artist = get_site_artist()
         f = self.cleaned_data.get("image_file")
         if f:
             obj.image_path = save_uploaded_image(f)

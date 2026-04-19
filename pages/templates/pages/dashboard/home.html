@@ -1,55 +1,89 @@
 {% extends "pages/dashboard/base_dashboard.html" %}
+{% load static %}
 
 {% block title %}Overview{% endblock %}
 {% block dash_title %}Overview{% endblock %}
-{% block dash_subtitle %}At a glance{% endblock %}
+{% block dash_subtitle %}Your gallery at a glance{% endblock %}
 
 {% block dash_content %}
-<div class="dash-stats">
-  <div class="dash-stat">
-    <div class="dash-stat__value">{{ counts.artists }}</div>
-    <div class="dash-stat__label">Artists</div>
+<section class="dash-hero">
+  <div class="dash-hero__copy">
+    <p class="dash-hero__kicker">Single-artist studio</p>
+    <h2 class="dash-hero__title">Welcome back</h2>
+    <p class="dash-hero__lede">
+      Everything here updates <strong>{{ site_artist_name }}</strong>’s public gallery and journal.
+      No roster to manage — just work, words, and walls.
+    </p>
   </div>
-  <div class="dash-stat">
-    <div class="dash-stat__value">{{ counts.artworks }}</div>
-    <div class="dash-stat__label">Artworks</div>
-  </div>
-  <div class="dash-stat">
-    <div class="dash-stat__value">{{ counts.posts }}</div>
-    <div class="dash-stat__label">Journal</div>
-  </div>
-  <div class="dash-stat">
-    <div class="dash-stat__value">{{ counts.categories }}</div>
-    <div class="dash-stat__label">Categories</div>
-  </div>
+  <div class="dash-hero__accent" aria-hidden="true"></div>
+</section>
+
+<div class="dash-bento">
+  <article class="dash-bento__card dash-bento__card--wide">
+    <span class="dash-bento__num">{{ counts.artworks }}</span>
+    <h3 class="dash-bento__label">Artworks on display</h3>
+    <p class="dash-bento__hint">Images and captions in the main gallery.</p>
+    <a class="dash-bento__link" href="{% url 'dashboard:artwork_list' %}">Manage gallery wall →</a>
+  </article>
+  <article class="dash-bento__card">
+    <span class="dash-bento__num">{{ counts.posts }}</span>
+    <h3 class="dash-bento__label">Journal entries</h3>
+    <p class="dash-bento__hint">Studio notes on Inspiration.</p>
+    <a class="dash-bento__link" href="{% url 'dashboard:post_list' %}">Open journal →</a>
+  </article>
+  <article class="dash-bento__card">
+    <span class="dash-bento__num">{{ counts.categories }}</span>
+    <h3 class="dash-bento__label">Categories</h3>
+    <p class="dash-bento__hint">Curatorial groupings for pieces.</p>
+    <a class="dash-bento__link" href="{% url 'dashboard:category_list' %}">Edit categories →</a>
+  </article>
 </div>
 
-<div class="dash-grid-2">
-  <div class="dash-card dash-mini">
-    <div class="dash-card__head"><h2>Recent artworks</h2></div>
-    <ul>
+<div class="dash-panels">
+  <div class="dash-panel">
+    <div class="dash-panel__head">
+      <h2>Latest pieces</h2>
+      <span class="dash-panel__tag">Newest first</span>
+    </div>
+    <ul class="dash-filmstrip">
       {% for a in recent_art %}
-        <li>
-          <span>{{ a.title }}</span>
-          <span>{{ a.category.name|default:"—" }}</span>
+        <li class="dash-filmstrip__item">
+          <a class="dash-filmstrip__card" href="{% url 'dashboard:artwork_edit' a.pk %}">
+            {% if a.image_path %}
+              <img src="{% static a.image_path %}" alt="" class="dash-filmstrip__img" width="120" height="96" />
+            {% else %}
+              <div class="dash-filmstrip__placeholder" aria-hidden="true"></div>
+            {% endif %}
+            <span class="dash-filmstrip__meta">
+              <span class="dash-filmstrip__title">{{ a.title }}</span>
+              <span class="dash-filmstrip__cat">{{ a.category.name|default:"Uncategorized" }}</span>
+            </span>
+          </a>
         </li>
       {% empty %}
-        <li><span>No artworks yet.</span></li>
+        <li class="dash-filmstrip__empty">No artworks yet — add your first piece to the wall.</li>
       {% endfor %}
     </ul>
   </div>
-  <div class="dash-card dash-mini">
-    <div class="dash-card__head"><h2>Recent journal entries</h2></div>
-    <ul>
+
+  <div class="dash-panel">
+    <div class="dash-panel__head">
+      <h2>Journal</h2>
+      <span class="dash-panel__tag">Recent</span>
+    </div>
+    <ul class="dash-timeline">
       {% for p in recent_posts %}
-        <li>
-          <span>{{ p.title }}</span>
-          <span>{{ p.post_date|date:"M j" }}</span>
+        <li class="dash-timeline__row">
+          <a href="{% url 'dashboard:post_edit' p.pk %}" class="dash-timeline__link">
+            <span class="dash-timeline__title">{{ p.title }}</span>
+            <time class="dash-timeline__date" datetime="{{ p.post_date|date:'c' }}">{{ p.post_date|date:"M j" }}</time>
+          </a>
         </li>
       {% empty %}
-        <li><span>No journal entries yet.</span></li>
+        <li class="dash-timeline__empty">No entries yet.</li>
       {% endfor %}
     </ul>
+    <a class="dash-panel__cta" href="{% url 'dashboard:post_create' %}">+ New journal entry</a>
   </div>
 </div>
 {% endblock %}

@@ -4,60 +4,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio sign in · Studio Radiance</title>
+  <title>Atelier sign in · Studio Radiance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'pages/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'pages/site-footer.css' %}">
   <style>
-    .dash-login-root { margin:0; min-height:100vh; font-family:"DM Sans",system-ui,sans-serif;
-      background: radial-gradient(1200px 600px at 10% -10%, rgba(244,126,165,0.35), transparent),
-        radial-gradient(800px 400px at 100% 0%, rgba(120,80,200,0.2), transparent),
-        linear-gradient(165deg, #120a14 0%, #1a1224 45%, #0f0c12 100%);
-      display: grid; place-items: center; padding: 24px;
+    .dash-login-root {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -20%, rgba(201, 162, 39, 0.18), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 10%, rgba(126, 184, 168, 0.12), transparent),
+        linear-gradient(165deg, #0a1210 0%, #0f1613 50%, #080d0b 100%);
+    }
+    .dash-login-page {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      /* Let <html> gradient show through footer + flex gaps (avoids a band vs .site-footer--dark). */
+      background: transparent;
+    }
+    .dash-login-page__center {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 24px;
     }
     .login-card {
-      width: min(100%, 400px);
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 36px 32px 32px;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 40px 100px rgba(0,0,0,0.35);
+      width: min(100%, 420px);
+      background: linear-gradient(145deg, rgba(30, 42, 36, 0.92) 0%, rgba(18, 28, 24, 0.96) 100%);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: 22px;
+      padding: 40px 34px 34px;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
-    .login-card h1 { margin:0 0 8px; color:#fff; font-size:1.5rem; letter-spacing:-0.02em; }
-    .login-card p.lede { margin:0 0 28px; color:#c4b8d4; font-size:0.92rem; line-height:1.5; }
-    .login-card label { display:block; color:#e8e0f0; font-size:0.82rem; font-weight:600; margin-bottom:6px; }
+    .login-card h1 {
+      margin: 0 0 10px;
+      font-family: "Fraunces", Georgia, serif;
+      color: #f2f5f3;
+      font-size: 1.65rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .login-card p.lede {
+      margin: 0 0 30px;
+      color: rgba(232, 236, 233, 0.55);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+    .login-card label {
+      display: block;
+      color: rgba(232, 236, 233, 0.75);
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
     .login-field {
-      width:100%; box-sizing:border-box; padding:12px 14px; border-radius:12px;
-      border:1px solid rgba(255,255,255,0.12); background:rgba(0,0,0,0.25); color:#fff;
-      font:inherit; margin-bottom:4px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(0, 0, 0, 0.25);
+      color: #fff;
+      font: inherit;
+      margin-bottom: 4px;
     }
-    .login-field:focus { outline:2px solid rgba(244,126,165,0.45); border-color:transparent; }
-    .login-card .field { margin-bottom:16px; }
-    .login-card .err { color:#fecaca; font-size:0.85rem; margin-top:6px; }
-    .login-card .nonfield { margin-bottom:16px; }
+    .login-field:focus {
+      outline: 2px solid rgba(201, 162, 39, 0.4);
+      border-color: transparent;
+    }
+    .login-card .field { margin-bottom: 16px; }
+    .login-card .err { color: #fecaca; font-size: 0.85rem; margin-top: 6px; }
+    .login-card .nonfield { margin-bottom: 16px; }
     .login-card button[type="submit"] {
-      width:100%; margin-top:12px; padding:14px; border:none; border-radius:12px;
-      background:#f47ea5; color:#fff; font-weight:700; font-size:1rem; cursor:pointer;
+      width: 100%;
+      margin-top: 14px;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #3d6b5a, #2f5d4f);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      font-family: inherit;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .login-card button:hover { transform: translateY(-1px); box-shadow:0 16px 40px rgba(244,126,165,0.25); }
-    .login-foot { margin-top:22px; text-align:center; }
-    .login-foot a { color:#d4c4e8; font-size:0.88rem; }
+    .login-card button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(47, 93, 79, 0.35);
+    }
+    .login-foot { margin-top: 24px; text-align: center; }
+    .login-foot a { color: #7eb8a8; font-size: 0.88rem; text-decoration: none; }
+    .login-foot a:hover { text-decoration: underline; }
   </style>
 </head>
-<body>
+<body class="dash-login-page">
+  <div class="dash-login-page__center">
   <div class="login-card">
     {% if messages %}
       <ul style="list-style:none;margin:0 0 18px;padding:0;">
         {% for message in messages %}
-          <li class="err" style="background:rgba(254,202,202,0.12);padding:10px 12px;border-radius:10px;margin-bottom:8px;">{{ message }}</li>
+          <li class="err" style="background:rgba(254,202,202,0.1);padding:10px 12px;border-radius:10px;margin-bottom:8px;">{{ message }}</li>
         {% endfor %}
       </ul>
     {% endif %}
-    <h1>Sign in to the studio</h1>
-    <p class="lede">For the artist or studio team only. Use the account you were given to update the live site.</p>
+    <h1>Sign in to the atelier</h1>
+    <p class="lede">Private access for updating your single-artist gallery and journal on the live site.</p>
     <form method="post" action="{% url 'dashboard:login' %}">
       {% csrf_token %}
       {% if form.non_field_errors %}
@@ -77,5 +136,7 @@
       <a href="{% url 'pages:home' %}">← Back to the site</a>
     </div>
   </div>
+  </div>
+  {% include "partials/site_footer.html" with footer_variant="dark" %}
 </body>
 </html>

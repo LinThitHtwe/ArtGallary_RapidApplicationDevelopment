@@ -7,6 +7,7 @@
   <title>{% block title %}Studio Radiance{% endblock %}</title>
   {% include "partials/fonts_public.html" %}
   <link rel="stylesheet" href="{% static 'pages/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'pages/site-footer.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
 <body class="{% block body_class %}{% endblock %}">
@@ -45,9 +46,7 @@
       {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-      <span>Studio Radiance · {% now "Y" %}</span>
-    </footer>
+    {% include "partials/site_footer.html" %}
   </div>
   {# Lenis smooth scroll — site-wide (sync so inline page scripts see window.__lenis) #}
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.0.45/dist/lenis.min.js"></script>

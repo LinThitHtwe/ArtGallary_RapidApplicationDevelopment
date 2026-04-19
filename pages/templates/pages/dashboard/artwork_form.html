@@ -6,28 +6,136 @@
 {% block dash_subtitle %}Upload adds a new image to the gallery{% endblock %}
 
 {% block dash_content %}
-<form method="post" enctype="multipart/form-data" class="dash-form-card">
+<form method="post" enctype="multipart/form-data" class="dash-form-panel">
   {% csrf_token %}
   {% if form.non_field_errors %}
-    <ul class="dash-errorlist">{{ form.non_field_errors }}</ul>
+    <ul class="dash-errorlist dash-errorlist--block">{{ form.non_field_errors }}</ul>
   {% endif %}
-  {% if editing and artwork.image_path %}
-    <p style="margin:0 0 18px;font-size:0.88rem;color:#5f5752;">
-      Current file: <strong>{{ artwork.image_path }}</strong>
-      {% if artwork.image_path %}<br><img src="{% static artwork.image_path %}" alt="" style="max-width:220px;border-radius:12px;margin-top:10px;border:1px solid rgba(0,0,0,0.08);">{% endif %}
-    </p>
-  {% endif %}
-  {% for field in form %}
-    <div class="field">
-      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-      {{ field }}
-      {% if field.help_text %}<p class="field__help" style="margin:6px 0 0;font-size:0.85rem;color:#7a726c;">{{ field.help_text }}</p>{% endif %}
-      {% if field.errors %}<ul class="dash-errorlist">{{ field.errors }}</ul>{% endif %}
+
+  {% if editing %}
+  <section class="dash-artwork-current" aria-label="Current artwork">
+    {% if artwork.image_path %}
+    <div class="dash-artwork-current__inner">
+      <div class="dash-artwork-current__thumb">
+        <img src="{% static artwork.image_path %}" alt="" width="320" height="240" loading="lazy" />
+      </div>
+      <div class="dash-artwork-current__copy">
+        <p class="dash-artwork-current__label">On the wall now</p>
+        <p class="dash-artwork-current__file">{{ artwork.image_path }}</p>
+        <p class="dash-artwork-current__hint">Upload a new file below to replace this image.</p>
+      </div>
     </div>
-  {% endfor %}
-  <div class="dash-form-actions">
-    <button type="submit" class="dash-btn dash-btn--primary">Save</button>
-    <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:artwork_list' %}">Cancel</a>
+    {% else %}
+    <p class="dash-artwork-current__empty">No image file on record yet — add one below.</p>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <div class="dash-form-panel__main">
+    {% for field in form %}
+      {% if field.name != "image_file" %}
+      <div class="field field--{{ field.name }}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="dash-field-help">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}<ul class="dash-errorlist">{{ field.errors }}</ul>{% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="field field--image_file">
+      <label for="{{ form.image_file.id_for_label }}" class="dash-upload__label">{{ form.image_file.label }}</label>
+      <div class="dash-upload" id="dashArtworkUpload" data-dash-upload>
+        <div class="dash-upload__surface" aria-hidden="true">
+          <span class="dash-upload__icon">◇</span>
+          <p class="dash-upload__title">Drop an image here</p>
+          <p class="dash-upload__hint">or click to browse · JPG, PNG, WebP, GIF</p>
+        </div>
+        <div class="dash-upload__picked" id="dashUploadPicked" hidden>
+          <span class="dash-upload__picked-name" id="dashUploadFileName"></span>
+          <button type="button" class="dash-upload__clear" id="dashUploadClear" aria-label="Clear selected file">Remove</button>
+        </div>
+        {{ form.image_file }}
+      </div>
+      {% if form.image_file.help_text %}<p class="dash-field-help">{{ form.image_file.help_text }}</p>{% endif %}
+      {% if form.image_file.errors %}<ul class="dash-errorlist">{{ form.image_file.errors }}</ul>{% endif %}
+    </div>
+
+    <div class="dash-form-actions dash-form-actions--bar">
+      <button type="submit" class="dash-btn dash-btn--primary">Save</button>
+      <a class="dash-btn dash-btn--ghost" href="{% url 'dashboard:artwork_list' %}">Cancel</a>
+    </div>
   </div>
 </form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var root = document.getElementById("dashArtworkUpload");
+  if (!root) return;
+  var input = root.querySelector('input[type="file"]');
+  var surface = root.querySelector(".dash-upload__surface");
+  var picked = document.getElementById("dashUploadPicked");
+  var nameEl = document.getElementById("dashUploadFileName");
+  var clearBtn = document.getElementById("dashUploadClear");
+  if (!input || !surface || !picked || !nameEl || !clearBtn) return;
+
+  function hasFile() {
+    return input.files && input.files.length > 0;
+  }
+
+  function syncUI() {
+    if (hasFile()) {
+      surface.style.display = "none";
+      picked.hidden = false;
+      nameEl.textContent = input.files[0].name;
+      root.classList.add("dash-upload--has-file");
+    } else {
+      surface.style.display = "";
+      picked.hidden = true;
+      nameEl.textContent = "";
+      root.classList.remove("dash-upload--has-file");
+    }
+  }
+
+  input.addEventListener("change", syncUI);
+
+  root.addEventListener("dragenter", function (e) {
+    e.preventDefault();
+    root.classList.add("dash-upload--active");
+  });
+  root.addEventListener("dragover", function (e) {
+    e.preventDefault();
+    root.classList.add("dash-upload--active");
+  });
+  root.addEventListener("dragleave", function (e) {
+    if (!root.contains(e.relatedTarget)) root.classList.remove("dash-upload--active");
+  });
+  root.addEventListener("drop", function (e) {
+    e.preventDefault();
+    root.classList.remove("dash-upload--active");
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (!files || !files.length) return;
+    var f = files[0];
+    if (!/^image\//.test(f.type) && !/\.(jpe?g|png|webp|gif)$/i.test(f.name)) return;
+    try {
+      var dt = new DataTransfer();
+      dt.items.add(f);
+      input.files = dt.files;
+    } catch (err) {
+      return;
+    }
+    syncUI();
+  });
+
+  clearBtn.addEventListener("click", function () {
+    input.value = "";
+    syncUI();
+    input.focus();
+  });
+
+  syncUI();
+})();
+</script>
 {% endblock %}

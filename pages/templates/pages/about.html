@@ -257,30 +257,45 @@
     </div>
   </section>
 
-  {# ── Process rail ── #}
-  <section class="py-16 lg:py-24 bg-ink text-cream" aria-labelledby="process-heading">
-    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
-      <h2 id="process-heading" class="font-display text-3xl lg:text-4xl mb-12 lg:mb-16" data-about-reveal>
-        How a piece <span class="italic text-rose">usually</span> finds its feet
-      </h2>
-      <ol class="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-6 relative">
-        <li class="hidden md:block absolute top-8 left-[16%] right-[16%] h-px bg-cream/15" aria-hidden="true"></li>
-        <li data-about-reveal class="relative">
-          <span class="inline-flex size-10 items-center justify-center rounded-full bg-rose text-cream font-display text-xl mb-4">1</span>
-          <h3 class="font-display text-xl">Light first</h3>
-          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Block shapes before pigment. Ask where the quiet is.</p>
-        </li>
-        <li data-about-reveal class="relative">
-          <span class="inline-flex size-10 items-center justify-center rounded-full bg-cream/10 ring-1 ring-cream/30 text-cream font-display text-xl mb-4">2</span>
-          <h3 class="font-display text-xl">Shape &amp; rhythm</h3>
-          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Repeat motifs until the eye has somewhere to land.</p>
-        </li>
-        <li data-about-reveal class="relative">
-          <span class="inline-flex size-10 items-center justify-center rounded-full bg-cream/10 ring-1 ring-cream/30 text-cream font-display text-xl mb-4">3</span>
-          <h3 class="font-display text-xl">Colour last</h3>
-          <p class="mt-2 font-serif text-sm text-cream/70 leading-relaxed">Rose, sand, ink—only as much noise as the story needs.</p>
-        </li>
-      </ol>
+  {# ── Process: same card rhythm as “Signals”, one reveal block, no stray list items ── #}
+  <section class="relative py-16 lg:py-24 overflow-hidden bg-ink text-cream" aria-labelledby="process-heading">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_-20%,rgba(196,91,110,0.22),transparent_55%)] opacity-90"></div>
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)]">
+      <div class="max-w-2xl mx-auto text-center mb-12 lg:mb-16" data-about-reveal>
+        <p class="text-[0.68rem] tracking-[0.22em] uppercase text-cream/45 font-semibold mb-4">The order of things</p>
+        <h2 id="process-heading" class="font-display text-3xl lg:text-[2.5rem] tracking-[-0.03em] leading-[1.12]">
+          How a piece <span class="italic text-rose">usually</span> finds its feet
+        </h2>
+      </div>
+
+      <div data-about-reveal>
+        <ol class="mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 list-none p-0 m-0">
+          <li class="flex flex-col rounded-2xl bg-cream/[0.07] px-7 py-8 lg:px-8 lg:py-9 ring-1 ring-cream/10 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)] md:text-center">
+            <span class="font-display text-[2.75rem] leading-none text-rose/85 tabular-nums md:mx-auto" aria-hidden="true">01</span>
+            <span class="sr-only">Step 1</span>
+            <h3 class="mt-4 font-display text-xl lg:text-2xl text-cream">Light first</h3>
+            <p class="mt-3 font-serif text-sm leading-relaxed text-cream/70 max-w-xs md:max-w-none md:mx-auto">
+              Block shapes before pigment. Ask where the quiet is.
+            </p>
+          </li>
+          <li class="flex flex-col rounded-2xl bg-cream/[0.07] px-7 py-8 lg:px-8 lg:py-9 ring-1 ring-cream/10 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)] md:text-center">
+            <span class="font-display text-[2.75rem] leading-none text-rose/85 tabular-nums md:mx-auto" aria-hidden="true">02</span>
+            <span class="sr-only">Step 2</span>
+            <h3 class="mt-4 font-display text-xl lg:text-2xl text-cream">Shape &amp; rhythm</h3>
+            <p class="mt-3 font-serif text-sm leading-relaxed text-cream/70 max-w-xs md:max-w-none md:mx-auto">
+              Repeat motifs until the eye has somewhere to land.
+            </p>
+          </li>
+          <li class="flex flex-col rounded-2xl bg-cream/[0.07] px-7 py-8 lg:px-8 lg:py-9 ring-1 ring-cream/10 shadow-[0_20px_50px_-28px_rgba(0,0,0,0.45)] md:text-center">
+            <span class="font-display text-[2.75rem] leading-none text-rose/85 tabular-nums md:mx-auto" aria-hidden="true">03</span>
+            <span class="sr-only">Step 3</span>
+            <h3 class="mt-4 font-display text-xl lg:text-2xl text-cream">Colour last</h3>
+            <p class="mt-3 font-serif text-sm leading-relaxed text-cream/70 max-w-xs md:max-w-none md:mx-auto">
+              Rose, sand, ink—only as much noise as the story needs.
+            </p>
+          </li>
+        </ol>
+      </div>
     </div>
   </section>
 

@@ -7,6 +7,7 @@
   <title>Valentin Pavageau - Artworks</title>
   {% include "partials/fonts_public.html" %}
   <link rel="stylesheet" href="{% static 'pages/styles.css' %}" />
+  <link rel="stylesheet" href="{% static 'pages/site-footer.css' %}" />
 </head>
 <body>
   <div class="page-shell">
@@ -76,6 +77,8 @@
         <a class="primary-button" href="{% url 'pages:legacy_showcase' %}">Back to showcase</a>
       </div>
     </section>
+
+    {% include "partials/site_footer.html" %}
   </div>
 </body>
 </html>

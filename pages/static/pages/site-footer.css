@@ -1,0 +1,146 @@
+/* Site footer — shared public + dashboard/login (light + dark variant) */
+
+.site-footer {
+  --sf-ink: #1f1c1a;
+  --sf-muted: #6e665e;
+  --sf-line: rgba(47, 40, 36, 0.1);
+  --sf-rose: #c45b6e;
+  --sf-rose-deep: #9e3d52;
+  --sf-paper: #faf6f1;
+  margin-top: auto;
+  padding-top: 48px;
+  padding-bottom: 32px;
+  border-top: none;
+  /* Transparent so the same body wash shows through as in <main> — avoids a flat band vs gradient. */
+  background: transparent;
+  font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  color: var(--sf-muted);
+}
+
+.site-footer__inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px 40px;
+  margin-bottom: 28px;
+}
+
+@media (min-width: 640px) {
+  .site-footer__inner {
+    grid-template-columns: minmax(0, 1.2fr) repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.site-footer__logo {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--sf-ink);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.site-footer__logo:hover {
+  color: var(--sf-rose-deep);
+}
+
+.site-footer__tagline {
+  margin: 10px 0 0;
+  max-width: 28ch;
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  font-style: italic;
+  color: var(--sf-muted);
+}
+
+.site-footer__nav-label {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sf-rose-deep);
+  margin-bottom: 12px;
+  opacity: 0.85;
+}
+
+.site-footer__links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.site-footer__links a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--sf-ink);
+  text-decoration: none;
+  opacity: 0.88;
+}
+
+.site-footer__links a:hover {
+  color: var(--sf-rose-deep);
+  opacity: 1;
+}
+
+.site-footer__base {
+  padding-top: 20px;
+  border-top: none;
+}
+
+.site-footer__copy {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--sf-muted);
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .site-footer__copy {
+    text-align: left;
+  }
+}
+
+/* Dark surround (dashboard + login) */
+.site-footer.site-footer--dark {
+  --sf-ink: #f2f0ec;
+  --sf-muted: rgba(232, 236, 233, 0.55);
+  --sf-line: rgba(255, 255, 255, 0.08);
+  --sf-rose: #e8a0b0;
+  --sf-rose-deep: #f0b8c4;
+  --sf-paper: transparent;
+  padding-left: clamp(18px, 4vw, 42px);
+  padding-right: clamp(18px, 4vw, 42px);
+  /* Same as public: no second paint layer — dashboard body / login html gradient continues behind. */
+  background: transparent;
+  border-top: none;
+  box-shadow: none;
+}
+
+.site-footer.site-footer--dark .site-footer__logo:hover {
+  color: var(--sf-rose);
+}
+
+.site-footer.site-footer--dark .site-footer__links a {
+  color: rgba(242, 240, 236, 0.88);
+}
+
+.site-footer.site-footer--dark .site-footer__links a:hover {
+  color: #fff;
+}
+
+.site-footer.site-footer--dark .site-footer__copy {
+  color: rgba(232, 236, 233, 0.45);
+}
+
+.site-footer.site-footer--dark .site-footer__inner,
+.site-footer.site-footer--dark .site-footer__base {
+  max-width: 1120px;
+  margin-left: auto;
+  margin-right: auto;
+}

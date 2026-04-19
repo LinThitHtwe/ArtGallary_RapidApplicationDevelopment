@@ -8,10 +8,6 @@ urlpatterns = [
     path("login/", dashboard_views.StaffLoginView.as_view(), name="login"),
     path("logout/", dashboard_views.StaffLogoutView.as_view(), name="logout"),
     path("", dashboard_views.dashboard_home, name="home"),
-    path("artists/", dashboard_views.artist_list, name="artist_list"),
-    path("artists/new/", dashboard_views.artist_create, name="artist_create"),
-    path("artists/<int:pk>/edit/", dashboard_views.artist_edit, name="artist_edit"),
-    path("artists/<int:pk>/delete/", dashboard_views.artist_delete, name="artist_delete"),
     path("categories/", dashboard_views.category_list, name="category_list"),
     path(
         "categories/<int:pk>/delete/",
