@@ -14,7 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from importlib import import_module
+
 from django.urls import include, path
+
+# Load urlconf by module object so we always bind this project's `pages` routes
+# (avoids stale or ambiguous imports when `include("pages.urls")` is resolved).
+_pages_urlconf = import_module("pages.urls")
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
@@ -22,5 +28,5 @@ urlpatterns = [
         "dashboard/",
         include(("pages.dashboard_urls", "dashboard"), namespace="dashboard"),
     ),
-    path("", include("pages.urls")),
+    path("", include(_pages_urlconf)),
 ]

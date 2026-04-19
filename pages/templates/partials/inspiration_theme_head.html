@@ -1,0 +1,57 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: "#fffbf7", paper: "#faf6f1", paper2: "#f0e8e0",
+          blush: "#fdeef2", peach: "#fbe8ec", sand: "#f9efe2",
+          ink: "#1f1c1a", "ink-soft": "#454039", muted: "#6e665e",
+          rose: "#c45b6e", "rose-deep": "#9e3d52",
+          twilight: "#2a2438", "twilight-soft": "#3d3648",
+        },
+        fontFamily: {
+          display: ['"Cormorant Garamond"', "Georgia", "serif"],
+          serif:   ['"Newsreader"', "Georgia", "serif"],
+          sans:    ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+        },
+        maxWidth: { shell: "1180px" },
+      },
+    },
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<style>
+  body.inspiration-tw {
+    overflow-x: clip;
+    background-color: #faf6f1;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 100% 0%, rgba(196, 91, 110, 0.12), transparent 55%),
+      radial-gradient(ellipse 60% 45% at 0% 100%, rgba(42, 36, 56, 0.06), transparent 50%),
+      linear-gradient(180deg, #f8f4ef 0%, #faf6f1 35%, #fffbf7 100%);
+  }
+  body.inspiration-tw .page-shell {
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+    background: transparent;
+  }
+  body.inspiration-tw .site-header-inner,
+  body.inspiration-tw .flash-messages,
+  body.inspiration-tw .site-footer {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 42px);
+  }
+  body.inspiration-tw .site-main { min-height: auto; }
+  html.hjs-inspire [data-inspire-reveal] { opacity: 0; transform: translateY(26px); }
+
+  .inspire-hero-grid {
+    background-image:
+      linear-gradient(rgba(31, 28, 26, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(31, 28, 26, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+</style>
+<script>document.documentElement.classList.add("hjs-inspire");</script>

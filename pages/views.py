@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
-from django.shortcuts import render
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, render
 
 from blog.models import Post
 from gallery.models import Artwork, Category
@@ -106,10 +108,46 @@ def gallery_page(request):
     )
 
 
+INSPIRATION_PAGE_SIZE = 6
+
+
 def inspiration(request):
-    posts = Post.objects.order_by("-post_date", "-id")[:12]
+    post_qs = Post.objects.order_by("-post_date", "-id")
+    paginator = Paginator(post_qs, INSPIRATION_PAGE_SIZE)
+    page = request.GET.get("page", 1)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
     return render(
         request,
         "pages/inspiration.html",
-        {"posts": posts},
+        {"posts": posts, "paginator": paginator},
+    )
+
+
+def inspiration_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    newer = (
+        Post.objects.filter(
+            Q(post_date__gt=post.post_date)
+            | Q(post_date=post.post_date, id__gt=post.id)
+        )
+        .order_by("post_date", "id")
+        .first()
+    )
+    older = (
+        Post.objects.filter(
+            Q(post_date__lt=post.post_date)
+            | Q(post_date=post.post_date, id__lt=post.id)
+        )
+        .order_by("-post_date", "-id")
+        .first()
+    )
+    return render(
+        request,
+        "pages/inspiration_post.html",
+        {"post": post, "newer_post": newer, "older_post": older},
     )

@@ -5,176 +5,117 @@
 {% block body_class %}inspiration-tw{% endblock %}
 
 {% block extra_head %}
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          cream: "#fffbf7", paper: "#faf6f1", paper2: "#f0e8e0",
-          blush: "#fdeef2", peach: "#fbe8ec", sand: "#f9efe2",
-          ink: "#1f1c1a", "ink-soft": "#454039", muted: "#6e665e",
-          rose: "#c45b6e", "rose-deep": "#9e3d52",
-          twilight: "#2a2438", "twilight-soft": "#3d3648",
-        },
-        fontFamily: {
-          display: ['"Cormorant Garamond"', "Georgia", "serif"],
-          serif:   ['"Newsreader"', "Georgia", "serif"],
-          sans:    ['"IBM Plex Sans"', "system-ui", "sans-serif"],
-        },
-        maxWidth: { shell: "1180px" },
-      },
-    },
-  };
-</script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<style>
-  body.inspiration-tw {
-    overflow-x: clip;
-    background-color: #faf6f1;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 100% 0%, rgba(196, 91, 110, 0.12), transparent 55%),
-      radial-gradient(ellipse 60% 45% at 0% 100%, rgba(42, 36, 56, 0.06), transparent 50%),
-      linear-gradient(180deg, #f8f4ef 0%, #faf6f1 35%, #fffbf7 100%);
-  }
-  body.inspiration-tw .page-shell {
-    max-width: none;
-    padding-inline: 0;
-    padding-bottom: 0;
-    background: transparent;
-  }
-  body.inspiration-tw .site-header-inner,
-  body.inspiration-tw .flash-messages,
-  body.inspiration-tw .site-footer {
-    max-width: 1180px;
-    margin-inline: auto;
-    padding-inline: clamp(18px, 4vw, 42px);
-  }
-  body.inspiration-tw .site-main { min-height: auto; }
-  html.hjs-inspire [data-inspire-reveal] { opacity: 0; transform: translateY(26px); }
-
-  .inspire-hero-grid {
-    background-image:
-      linear-gradient(rgba(31, 28, 26, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(31, 28, 26, 0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  .inspire-card-tilt:hover {
-    transform: rotate(-0.35deg) translateY(-2px);
-  }
-  @media (min-width: 1024px) {
-    .inspire-card-tilt:nth-child(even):hover {
-      transform: rotate(0.35deg) translateY(-2px);
-    }
-  }
-</style>
-<script>document.documentElement.classList.add("hjs-inspire");</script>
+{% include "partials/inspiration_theme_head.html" %}
 {% endblock %}
 
 {% block content %}
 <div class="font-sans text-ink">
 
-  {# ── Hero: journal / twilight — distinct from Gallery’s black slab ── #}
-  <section class="relative overflow-hidden border-b border-black/[0.06]" aria-labelledby="inspire-hero-title">
+  <header class="relative overflow-hidden border-b border-black/[0.06]" aria-labelledby="inspire-hero-title">
     <div class="pointer-events-none absolute inset-0 inspire-hero-grid opacity-[0.65]"></div>
     <div class="pointer-events-none absolute -top-32 right-[-8%] size-[min(72vw,380px)] rounded-full bg-rose/25 blur-[100px]"></div>
     <div class="pointer-events-none absolute bottom-[-20%] left-[-10%] size-[min(65vw,340px)] rounded-full bg-twilight/20 blur-[90px]"></div>
 
-    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-16 lg:py-24">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end">
-        <div class="lg:col-span-7">
-          <p data-inspire-reveal class="text-[0.68rem] tracking-[0.28em] uppercase text-rose-deep/90 font-semibold">The Radiance journal</p>
-          <h1 id="inspire-hero-title" data-inspire-reveal class="mt-5 font-display font-medium leading-[0.95] tracking-[-0.04em] text-[clamp(2.5rem,7vw,4.5rem)] text-ink">
-            Ideas worth <span class="italic text-rose-deep">returning to.</span>
-          </h1>
-          <p data-inspire-reveal class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-ink-soft">
-            Short notes from the studio—rituals, experiments, and half-finished thoughts kept here like margin scribbles you meant to return to.
-          </p>
-        </div>
-        <div data-inspire-reveal class="lg:col-span-5 lg:text-right">
-          {% if posts %}
-          <div class="inline-flex flex-col items-start lg:items-end gap-3 rounded-2xl bg-white/70 backdrop-blur-sm px-6 py-5 ring-1 ring-black/[0.07] shadow-[0_20px_50px_-24px_rgba(42,36,56,0.2)]">
-            <span class="text-[0.65rem] tracking-[0.2em] uppercase text-muted font-semibold">On the desk</span>
-            <span class="font-display text-4xl lg:text-5xl text-twilight-soft">{{ posts|length }}</span>
-            <span class="text-sm text-ink-soft font-medium">note{% if posts|length != 1 %}s{% endif %} in view</span>
-          </div>
-          {% else %}
-          <p class="font-serif text-ink-soft italic text-lg lg:text-right max-w-sm lg:ml-auto">The journal is resting—when the first note goes up, it will appear here.</p>
-          {% endif %}
-        </div>
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-16 lg:py-20">
+      <div class="max-w-2xl">
+        <p data-inspire-reveal class="text-[0.68rem] tracking-[0.28em] uppercase text-rose-deep/90 font-semibold">Journal</p>
+        <h1 id="inspire-hero-title" data-inspire-reveal class="mt-4 font-display font-medium leading-[0.98] tracking-[-0.04em] text-[clamp(2.35rem,6vw,3.75rem)] text-ink">
+          Notes from the studio, <span class="italic text-rose-deep">in full.</span>
+        </h1>
+        <p data-inspire-reveal class="mt-5 font-serif text-lg leading-relaxed text-ink-soft">
+          Longer reads open like a blog post—browse the archive below, then settle in with one entry at a time.
+        </p>
       </div>
-    </div>
-  </section>
-
-  {% if posts %}
-  {# ── Spine + entries: editorial rhythm ── #}
-  <div class="relative bg-gradient-to-b from-paper via-cream to-paper">
-    <div class="pointer-events-none absolute left-[clamp(18px,4vw,42px)] top-0 bottom-0 w-px bg-gradient-to-b from-rose/40 via-rose-deep/25 to-transparent hidden lg:block lg:left-[calc(50%-min(590px,50vw-18px)+2.5rem)]" aria-hidden="true"></div>
-
-    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-14 lg:py-20 space-y-16 lg:space-y-24">
-
-      {% for post in posts %}
-        {% if forloop.first %}
-        <article id="post-{{ post.id }}" data-inspire-reveal class="relative scroll-mt-28">
-          <div class="flex flex-wrap items-baseline gap-3 mb-4">
-            <span class="font-display text-5xl sm:text-6xl text-rose/40 select-none" aria-hidden="true">{{ forloop.counter|stringformat:"02d" }}</span>
-            <time class="text-[0.65rem] tracking-[0.2em] uppercase text-muted font-semibold" datetime="{{ post.post_date|date:'c' }}">{{ post.post_date|date:"F j, Y" }}</time>
-          </div>
-          <div class="relative rounded-[1.75rem] overflow-hidden bg-twilight text-cream ring-1 ring-black/20 shadow-[0_32px_80px_-28px_rgba(42,36,56,0.55)]">
-            <div class="absolute inset-0 opacity-[0.07] inspire-hero-grid pointer-events-none"></div>
-            <div class="absolute -right-20 -top-20 size-64 rounded-full bg-rose/30 blur-3xl pointer-events-none"></div>
-            <div class="relative p-8 sm:p-12 lg:p-14 lg:pr-16 max-w-3xl">
-              <h2 class="font-display text-3xl sm:text-4xl lg:text-[2.75rem] leading-[1.08] tracking-[-0.02em] text-cream">
-                {{ post.title }}
-              </h2>
-              <p class="mt-6 font-serif text-base sm:text-lg leading-relaxed text-cream/85 whitespace-pre-line">
-                {{ post.content|truncatewords:72 }}
-              </p>
-            </div>
-          </div>
-        </article>
-        {% else %}
-        {% if forloop.counter == 2 %}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 lg:gap-y-10">
-        {% endif %}
-          <article id="post-{{ post.id }}" data-inspire-reveal class="group relative inspire-card-tilt transition-transform duration-300 scroll-mt-28">
-            <div class="absolute -left-1 top-10 bottom-10 w-0.5 bg-gradient-to-b from-rose via-rose-deep/60 to-transparent rounded-full opacity-0 group-hover:opacity-100 transition-opacity hidden sm:block" aria-hidden="true"></div>
-            <div class="h-full rounded-2xl bg-white/90 backdrop-blur-sm ring-1 ring-black/[0.07] shadow-[0_18px_44px_-22px_rgba(31,28,26,0.18)] overflow-hidden flex flex-col sm:flex-row">
-              <div class="sm:w-[5.5rem] shrink-0 flex sm:flex-col items-center justify-center gap-2 py-4 sm:py-6 px-4 bg-gradient-to-b from-paper2 to-paper border-b sm:border-b-0 sm:border-r border-black/[0.06]">
-                <span class="font-display text-3xl text-rose/35 leading-none">{{ forloop.counter|stringformat:"02d" }}</span>
-                <time class="text-[0.6rem] tracking-[0.18em] uppercase text-muted font-semibold sm:[writing-mode:vertical-rl] sm:rotate-180 text-center" datetime="{{ post.post_date|date:'c' }}">{{ post.post_date|date:"M j" }}</time>
-              </div>
-              <div class="flex-1 p-6 sm:p-8 min-w-0">
-                <h2 class="font-display text-xl sm:text-2xl text-ink leading-tight tracking-[-0.02em] group-hover:text-rose-deep transition-colors">
-                  {{ post.title }}
-                </h2>
-                <p class="mt-4 font-serif text-[0.98rem] leading-relaxed text-ink-soft line-clamp-4">
-                  {{ post.content|truncatewords:36 }}
-                </p>
-              </div>
-            </div>
-          </article>
-        {% endif %}
-      {% endfor %}
-
-      {% if posts|length > 1 %}
+      {% if paginator.count %}
+      <div data-inspire-reveal class="mt-10 flex flex-wrap items-center gap-6 text-sm">
+        <div class="rounded-2xl bg-white/75 backdrop-blur-sm px-5 py-4 ring-1 ring-black/[0.07] shadow-[0_16px_40px_-24px_rgba(42,36,56,0.18)]">
+          <span class="text-[0.65rem] tracking-[0.2em] uppercase text-muted font-semibold block">Archive</span>
+          <span class="mt-1 font-display text-3xl text-twilight-soft">{{ paginator.count }}</span>
+          <span class="text-ink-soft">entr{% if paginator.count == 1 %}y{% else %}ies{% endif %}</span>
         </div>
+        {% if posts.paginator.num_pages > 1 %}
+        <p class="font-serif text-ink-soft max-w-xs">
+          Page <span class="text-ink font-semibold">{{ posts.number }}</span> of {{ posts.paginator.num_pages }}
+        </p>
+        {% endif %}
+      </div>
       {% endif %}
+    </div>
+  </header>
 
+  {% if paginator.count %}
+  <div class="relative bg-gradient-to-b from-paper via-cream to-paper">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-12 lg:py-16">
+      <div class="mx-auto max-w-[42rem]">
+        {% for post in posts %}
+        <article
+          id="post-{{ post.id }}"
+          data-inspire-reveal
+          class="group scroll-mt-28 {% if not forloop.last %}border-b border-black/[0.07] pb-12 mb-12{% endif %}"
+        >
+          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <time class="text-[0.65rem] tracking-[0.2em] uppercase text-muted font-semibold" datetime="{{ post.post_date|date:'c' }}">{{ post.post_date|date:"F j, Y" }}</time>
+            <span class="text-[0.65rem] text-rose-deep/70 font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity hidden sm:inline">· Open post</span>
+          </div>
+          <h2 class="mt-4 font-display text-[clamp(1.65rem,4vw,2.25rem)] leading-[1.12] tracking-[-0.02em] text-ink">
+            <a href="{% url 'pages:inspiration_post' post.pk %}" class="hover:text-rose-deep transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-deep/40 focus-visible:ring-offset-2 focus-visible:ring-offset-cream rounded-sm">
+              {{ post.title }}
+            </a>
+          </h2>
+          <p class="mt-4 font-serif text-[1.02rem] leading-relaxed text-ink-soft line-clamp-4">
+            {{ post.content|truncatewords:52 }}
+          </p>
+          <a
+            href="{% url 'pages:inspiration_post' post.pk %}"
+            class="mt-6 inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-rose-deep hover:text-rose-deep/80 border-b border-rose-deep/30 hover:border-rose-deep/60 pb-0.5 transition-colors"
+          >
+            Read full entry
+            <span aria-hidden="true" class="transition-transform group-hover:translate-x-0.5">→</span>
+          </a>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% if posts.paginator.num_pages > 1 %}
+      <nav data-inspire-reveal class="mx-auto max-w-[42rem] mt-4 flex flex-wrap items-center justify-between gap-4 pt-8 border-t border-black/[0.06]" aria-label="Journal pagination">
+        {% if posts.has_previous %}
+        <a
+          href="?page={{ posts.previous_page_number }}"
+          class="inline-flex items-center gap-2 rounded-full bg-white/90 ring-1 ring-black/[0.08] px-5 py-2.5 text-sm font-semibold text-ink hover:bg-blush/40 hover:ring-rose-deep/20 transition-colors"
+        >
+          <span aria-hidden="true">←</span> Newer entries
+        </a>
+        {% else %}
+        <span class="inline-flex items-center gap-2 rounded-full bg-black/[0.04] px-5 py-2.5 text-sm text-muted cursor-not-allowed" aria-disabled="true">
+          <span aria-hidden="true">←</span> Newer entries
+        </span>
+        {% endif %}
+        {% if posts.has_next %}
+        <a
+          href="?page={{ posts.next_page_number }}"
+          class="inline-flex items-center gap-2 rounded-full bg-twilight text-cream px-5 py-2.5 text-sm font-semibold hover:bg-twilight-soft transition-colors ml-auto"
+        >
+          Older entries <span aria-hidden="true">→</span>
+        </a>
+        {% else %}
+        <span class="inline-flex items-center gap-2 rounded-full bg-black/[0.04] px-5 py-2.5 text-sm text-muted cursor-not-allowed ml-auto" aria-disabled="true">
+          Older entries <span aria-hidden="true">→</span>
+        </span>
+        {% endif %}
+      </nav>
+      {% endif %}
     </div>
   </div>
   {% else %}
   <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-24 lg:py-32">
     <div data-inspire-reveal class="max-w-lg mx-auto text-center rounded-3xl bg-white/80 ring-1 ring-black/[0.06] px-10 py-16 shadow-[0_24px_60px_-30px_rgba(42,36,56,0.15)]">
       <span class="inline-flex size-14 items-center justify-center rounded-2xl bg-blush/60 text-rose-deep text-2xl font-display mb-6" aria-hidden="true">✎</span>
-      <p class="font-display text-2xl text-ink">No notes yet</p>
+      <p class="font-display text-2xl text-ink">No posts yet</p>
       <p class="mt-4 font-serif text-ink-soft leading-relaxed">Nothing published here yet. When there is news from the easel or the sketchbook, you will see it in this space first.</p>
     </div>
   </div>
   {% endif %}
 
-  {# ── Closing strip ── #}
   <section class="border-t border-black/[0.06] bg-[#1a1614] text-cream">
     <div data-inspire-reveal class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-12 lg:py-14 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
       <p class="font-serif text-cream/80 text-sm lg:text-base max-w-md">

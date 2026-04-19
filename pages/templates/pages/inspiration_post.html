@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — Journal · Studio Radiance{% endblock %}
+
+{% block body_class %}inspiration-tw{% endblock %}
+
+{% block extra_head %}
+{% include "partials/inspiration_theme_head.html" %}
+<style>
+  .inspire-prose p { margin-top: 1.15em; margin-bottom: 1.15em; }
+  .inspire-prose p:first-child { margin-top: 0; }
+  .inspire-prose p:last-child { margin-bottom: 0; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="font-sans text-ink">
+
+  <div class="relative border-b border-black/[0.06] bg-paper/80">
+    <div class="pointer-events-none absolute inset-0 inspire-hero-grid opacity-40"></div>
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-8 lg:py-10">
+      <nav data-inspire-reveal class="text-sm" aria-label="Breadcrumb">
+        <a href="{% url 'pages:inspiration' %}" class="text-rose-deep font-semibold hover:text-rose-deep/80 transition-colors">← Journal index</a>
+      </nav>
+    </div>
+  </div>
+
+  <article class="relative bg-gradient-to-b from-cream via-paper to-paper">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-12 lg:py-16">
+      <header data-inspire-reveal class="mx-auto max-w-[40rem] text-center">
+        <time class="text-[0.65rem] tracking-[0.22em] uppercase text-muted font-semibold" datetime="{{ post.post_date|date:'c' }}">{{ post.post_date|date:"F j, Y" }}</time>
+        <h1 class="mt-5 font-display text-[clamp(2rem,5.5vw,3.25rem)] leading-[1.08] tracking-[-0.03em] text-ink text-balance">
+          {{ post.title }}
+        </h1>
+        <p class="mt-4 font-serif text-ink-soft text-sm lg:text-base">Studio Radiance · Inspiration</p>
+      </header>
+
+      <div
+        data-inspire-reveal
+        class="mx-auto mt-12 lg:mt-14 max-w-[40rem] rounded-[1.5rem] bg-white/90 ring-1 ring-black/[0.07] shadow-[0_28px_70px_-32px_rgba(42,36,56,0.2)] px-8 sm:px-12 lg:px-14 py-10 lg:py-12"
+      >
+        <div class="inspire-prose font-serif text-[1.05rem] sm:text-[1.08rem] leading-[1.75] text-ink-soft whitespace-pre-line">
+          {{ post.content }}
+        </div>
+      </div>
+
+      <nav
+        data-inspire-reveal
+        class="mx-auto mt-14 max-w-[40rem] grid grid-cols-1 sm:grid-cols-2 gap-4"
+        aria-label="Adjacent journal entries"
+      >
+        <div class="min-h-[4.5rem] flex">
+          {% if older_post %}
+          <a
+            href="{% url 'pages:inspiration_post' older_post.pk %}"
+            class="flex flex-col justify-center w-full rounded-2xl bg-white/90 ring-1 ring-black/[0.07] px-5 py-4 hover:ring-rose-deep/25 hover:bg-blush/20 transition-colors text-left"
+          >
+            <span class="text-[0.65rem] tracking-[0.18em] uppercase text-muted font-semibold">Older</span>
+            <span class="mt-1 font-display text-lg text-ink leading-snug line-clamp-2">{{ older_post.title }}</span>
+          </a>
+          {% else %}
+          <div class="flex flex-col justify-center w-full rounded-2xl bg-black/[0.03] ring-1 ring-black/[0.05] px-5 py-4 text-left text-muted text-sm">
+            <span class="text-[0.65rem] tracking-[0.18em] uppercase font-semibold">Older</span>
+            <span class="mt-1 font-serif italic">Start of the archive</span>
+          </div>
+          {% endif %}
+        </div>
+        <div class="min-h-[4.5rem] flex sm:justify-end">
+          {% if newer_post %}
+          <a
+            href="{% url 'pages:inspiration_post' newer_post.pk %}"
+            class="flex flex-col justify-center w-full sm:text-right rounded-2xl bg-twilight text-cream px-5 py-4 ring-1 ring-black/20 hover:bg-twilight-soft transition-colors"
+          >
+            <span class="text-[0.65rem] tracking-[0.18em] uppercase text-cream/70 font-semibold">Newer</span>
+            <span class="mt-1 font-display text-lg leading-snug line-clamp-2">{{ newer_post.title }}</span>
+          </a>
+          {% else %}
+          <div class="flex flex-col justify-center w-full sm:text-right rounded-2xl bg-black/[0.03] ring-1 ring-black/[0.05] px-5 py-4 text-muted text-sm">
+            <span class="text-[0.65rem] tracking-[0.18em] uppercase font-semibold">Newer</span>
+            <span class="mt-1 font-serif italic">Latest entry</span>
+          </div>
+          {% endif %}
+        </div>
+      </nav>
+
+      <p data-inspire-reveal class="mx-auto mt-10 max-w-[40rem] text-center">
+        <a
+          href="{% url 'pages:inspiration' %}"
+          class="inline-flex items-center gap-2 text-sm font-semibold text-rose-deep hover:text-rose-deep/80 border-b border-rose-deep/25 hover:border-rose-deep/50 pb-0.5 transition-colors"
+        >
+          Back to all entries
+          <span aria-hidden="true">→</span>
+        </a>
+      </p>
+    </div>
+  </article>
+
+  <section class="border-t border-black/[0.06] bg-[#1a1614] text-cream">
+    <div data-inspire-reveal class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-12 lg:py-14 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+      <p class="font-serif text-cream/80 text-sm lg:text-base max-w-md">
+        Prefer images? The <span class="text-cream font-medium">gallery</span> is arranged by room—same voice, different medium.
+      </p>
+      <a href="{% url 'pages:gallery' %}" class="inline-flex items-center justify-center gap-2 self-start sm:self-auto rounded-full bg-cream text-ink px-6 py-3 text-sm font-semibold tracking-wide hover:bg-blush transition-colors shrink-0">
+        Browse works <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+  function whenGsap(cb, n) {
+    n = n || 80;
+    if (window.gsap && window.ScrollTrigger) return cb();
+    if (n <= 0) return cb();
+    setTimeout(function () { whenGsap(cb, n - 1); }, 50);
+  }
+  ready(function () {
+    whenGsap(function () {
+      if (!window.gsap || !window.ScrollTrigger) return;
+      gsap.registerPlugin(ScrollTrigger);
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduce && window.__lenis && window.__lenisConnectGsap) {
+        window.__lenisConnectGsap(window.gsap, window.ScrollTrigger);
+      }
+      if (reduce) {
+        document.querySelectorAll("[data-inspire-reveal]").forEach(function (el) {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        });
+        return;
+      }
+      gsap.utils.toArray("[data-inspire-reveal]").forEach(function (el) {
+        gsap.fromTo(
+          el,
+          { opacity: 0, y: 22 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power2.out",
+            scrollTrigger: { trigger: el, start: "top 90%", once: true },
+          }
+        );
+      });
+      window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+    });
+  });
+})();
+</script>
+{% endblock %}

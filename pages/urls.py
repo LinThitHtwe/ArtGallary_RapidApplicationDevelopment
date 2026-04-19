@@ -9,6 +9,12 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("about/", views.about, name="about"),
     path("gallery/", views.gallery_page, name="gallery"),
+    # More specific path first (before `inspiration/`).
+    path(
+        "inspiration/post/<int:pk>/",
+        views.inspiration_post,
+        name="inspiration_post",
+    ),
     path("inspiration/", views.inspiration, name="inspiration"),
     path(
         "pages/",
