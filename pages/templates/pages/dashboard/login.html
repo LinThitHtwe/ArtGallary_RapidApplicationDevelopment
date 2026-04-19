@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff sign in · Studio Radiance</title>
+  <title>Studio sign in · Studio Radiance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
@@ -56,8 +56,8 @@
         {% endfor %}
       </ul>
     {% endif %}
-    <h1>Staff sign in</h1>
-    <p class="lede">Use a Django user with <strong>staff</strong> checked (e.g. <code style="font-size:0.78em;opacity:0.9;">python manage.py createsuperuser</code>).</p>
+    <h1>Sign in to the studio</h1>
+    <p class="lede">For the artist or studio team only. Use the account you were given to update the live site.</p>
     <form method="post" action="{% url 'dashboard:login' %}">
       {% csrf_token %}
       {% if form.non_field_errors %}
@@ -71,10 +71,10 @@
         </div>
       {% endfor %}
       <input type="hidden" name="next" value="{{ next }}">
-      <button type="submit">Continue to dashboard</button>
+      <button type="submit">Continue</button>
     </form>
     <div class="login-foot">
-      <a href="{% url 'pages:home' %}">← Back to public site</a>
+      <a href="{% url 'pages:home' %}">← Back to the site</a>
     </div>
   </div>
 </body>

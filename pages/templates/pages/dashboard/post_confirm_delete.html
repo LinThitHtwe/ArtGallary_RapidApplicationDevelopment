@@ -1,12 +1,12 @@
 {% extends "pages/dashboard/base_dashboard.html" %}
 
-{% block title %}Delete post{% endblock %}
-{% block dash_title %}Delete post{% endblock %}
+{% block title %}Delete journal entry{% endblock %}
+{% block dash_title %}Delete journal entry{% endblock %}
 {% block dash_subtitle %}This cannot be undone{% endblock %}
 
 {% block dash_content %}
 <div class="dash-confirm">
-  <p>Delete the post <strong>{{ post.title }}</strong>?</p>
+  <p>Remove the journal entry <strong>{{ post.title }}</strong> from the live site?</p>
   <form method="post">
     {% csrf_token %}
     <div class="dash-form-actions">

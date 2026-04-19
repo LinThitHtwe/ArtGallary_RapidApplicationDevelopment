@@ -3,38 +3,482 @@
 
 {% block title %}Gallery – Studio Radiance{% endblock %}
 
-{% block content %}
-<header class="page-intro">
-  <span class="eyebrow eyebrow--soft">Curated works</span>
-  <h1>Art gallery</h1>
-  <p class="page-intro__lede">
-    Pieces pulled straight from the database—grouped by category so you can wander
-    from illustrations to posters to concept explorations.
-  </p>
-</header>
+{% block body_class %}gallery-tw{% endblock %}
 
-{% for category_name, artworks in category_groups %}
-  <section class="gallery-section" aria-labelledby="cat-{{ forloop.counter }}">
-    <h2 id="cat-{{ forloop.counter }}" class="gallery-section__title">{{ category_name }}</h2>
-    <div class="gallery-grid">
-      {% for artwork in artworks %}
-        <article class="gallery-card">
-          <a href="{% static artwork.image_path %}" class="gallery-card__media" target="_blank" rel="noopener noreferrer">
-            {% if artwork.image_path %}
-              <img src="{% static artwork.image_path %}" alt="{{ artwork.title }}" loading="lazy" width="400" height="320" />
-            {% else %}
-              <div class="gallery-card__placeholder">No image</div>
-            {% endif %}
-          </a>
-          <div class="gallery-card__body">
-            <h3 class="gallery-card__title">{{ artwork.title }}</h3>
-            <p class="gallery-card__desc">{{ artwork.description|truncatewords:28 }}</p>
+{% block extra_head %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          cream: "#fffbf7", paper: "#faf6f1", paper2: "#f0e8e0",
+          blush: "#fdeef2", peach: "#fbe8ec", sand: "#f9efe2",
+          ink: "#1f1c1a", "ink-soft": "#454039", muted: "#6e665e",
+          rose: "#c45b6e", "rose-deep": "#9e3d52",
+        },
+        fontFamily: {
+          display: ['"Cormorant Garamond"', "Georgia", "serif"],
+          serif:   ['"Newsreader"', "Georgia", "serif"],
+          sans:    ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+        },
+        maxWidth: { shell: "1180px" },
+      },
+    },
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<style>
+  body.gallery-tw { overflow-x: clip; }
+  body.gallery-tw .page-shell {
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+    background: transparent;
+  }
+  body.gallery-tw .site-header-inner,
+  body.gallery-tw .flash-messages,
+  body.gallery-tw .site-footer {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: clamp(18px, 4vw, 42px);
+  }
+  body.gallery-tw .site-main { min-height: auto; }
+  html.hjs-gallery [data-gallery-reveal] { opacity: 0; transform: translateY(28px); }
+
+  body.gallery-lightbox-open {
+    overflow: hidden;
+  }
+
+  #galleryLightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(12px, 3vw, 28px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.32s ease, visibility 0.32s ease;
+  }
+
+  #galleryLightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  #galleryLightbox .lb-dialog {
+    transform: translateY(14px) scale(0.985);
+    opacity: 0;
+    transition: opacity 0.38s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  #galleryLightbox.is-open .lb-dialog {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+</style>
+<script>document.documentElement.classList.add("hjs-gallery");</script>
+{% endblock %}
+
+{% block content %}
+<div class="font-sans text-ink">
+
+  {# ── Catalog hero (distinct from About’s light hero) ── #}
+  <section class="relative overflow-hidden bg-[#141210] text-cream" aria-labelledby="gallery-hero-title">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.06]"
+         style="background-image: linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px); background-size: 56px 56px;"></div>
+    <div class="pointer-events-none absolute -top-24 right-0 size-[min(80vw,420px)] rounded-full bg-rose/20 blur-[100px]"></div>
+    <div class="pointer-events-none absolute bottom-0 left-0 size-[min(60vw,320px)] rounded-full bg-blush/15 blur-[80px]"></div>
+
+    <div class="relative mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-16 lg:py-22">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-end">
+        <div class="lg:col-span-7">
+          <p data-gallery-reveal class="text-[0.68rem] tracking-[0.28em] uppercase text-cream/50 font-semibold">Collection</p>
+          <h1 id="gallery-hero-title" data-gallery-reveal class="mt-4 font-display font-medium leading-[0.95] tracking-[-0.04em] text-[clamp(2.6rem,7vw,4.75rem)]">
+            Works <span class="italic text-rose">on view.</span>
+          </h1>
+          <p data-gallery-reveal class="mt-6 max-w-xl font-serif text-lg leading-relaxed text-cream/75">
+            Every piece lives in a room—illustration, poster work, and concept art—grouped so you can wander slowly and look twice.
+          </p>
+          <dl data-gallery-reveal class="mt-10 flex flex-wrap gap-10">
+            <div>
+              <dt class="text-[0.65rem] tracking-[0.2em] uppercase text-cream/45 font-medium">Pieces</dt>
+              <dd class="font-display text-4xl mt-1">{{ gallery_total_works|default:0 }}</dd>
+            </div>
+            <div>
+              <dt class="text-[0.65rem] tracking-[0.2em] uppercase text-cream/45 font-medium">Rooms</dt>
+              <dd class="font-display text-4xl mt-1">{{ category_groups|length }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        {% if gallery_preview %}
+        <div data-gallery-reveal class="lg:col-span-5">
+          <p class="text-[0.65rem] tracking-[0.2em] uppercase text-cream/45 font-medium mb-3">Sampler</p>
+          <div class="flex flex-wrap gap-2 justify-start lg:justify-end">
+            {% for art in gallery_preview %}
+              <button type="button"
+                      class="group relative w-[calc(33.333%-0.5rem)] max-w-[100px] sm:max-w-[120px] aspect-square rounded-lg overflow-hidden ring-1 ring-white/15 hover:ring-rose/50 transition-shadow cursor-pointer p-0 border-0 bg-transparent focus:outline-none focus-visible:ring-2 focus-visible:ring-rose focus-visible:ring-offset-2 focus-visible:ring-offset-[#141210]"
+                      data-lb-item
+                      data-lb-src="{% static art.image_path %}"
+                      data-lb-title="{{ art.title }}"
+                      data-lb-artist="{% if art.artist %}{{ art.artist.name }}{% endif %}"
+                      data-lb-desc="{{ art.description|default:'' }}"
+                      data-lb-cat="Sampler"
+                      aria-label="View {{ art.title }}">
+                <img src="{% static art.image_path %}" alt="" class="size-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-500 pointer-events-none" loading="lazy" />
+              </button>
+            {% endfor %}
           </div>
-        </article>
-      {% endfor %}
+        </div>
+        {% endif %}
+      </div>
     </div>
   </section>
-{% empty %}
-  <p class="empty-state">No artworks yet. Content is managed through the staff dashboard.</p>
-{% endfor %}
+
+  {% if category_groups %}
+  {# ── Main: sticky index + “rooms” ── #}
+  <div class="bg-gradient-to-b from-paper via-cream to-paper border-t border-black/[0.06]">
+    <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-14 lg:py-20">
+      <div class="flex flex-col lg:flex-row gap-12 lg:gap-16">
+
+        {# Sticky index — desktop #}
+        <aside class="lg:w-44 shrink-0 lg:sticky lg:top-28 self-start" aria-label="Jump to category">
+          <p class="text-[0.65rem] tracking-[0.22em] uppercase text-muted font-semibold mb-4">Index</p>
+          <nav class="flex flex-row flex-wrap lg:flex-col gap-2 lg:gap-1">
+            {% for category_name, artworks in category_groups %}
+              <a href="#room-{{ category_name|slugify }}"
+                 class="inline-flex lg:block px-3 py-1.5 rounded-full lg:rounded-md text-sm font-medium text-ink-soft hover:text-rose-deep hover:bg-rose/10 border border-transparent hover:border-rose/20 transition-colors">
+                <span class="font-display italic text-rose-deep/80 mr-1.5 lg:inline">{{ forloop.counter|stringformat:"02d" }}</span>{{ category_name }}
+              </a>
+            {% endfor %}
+          </nav>
+        </aside>
+
+        <div class="min-w-0 flex-1 space-y-20 lg:space-y-28">
+          {% for category_name, artworks in category_groups %}
+            <section id="room-{{ category_name|slugify }}" class="scroll-mt-28" aria-labelledby="title-{{ category_name|slugify }}">
+              <div class="relative mb-8 lg:mb-10">
+                <span class="absolute -left-1 top-0 bottom-0 w-0.5 bg-gradient-to-b from-rose via-rose-deep to-rose/30 rounded-full" aria-hidden="true"></span>
+                <h2 id="title-{{ category_name|slugify }}" class="pl-5 font-display text-3xl lg:text-5xl tracking-[-0.03em] text-ink">
+                  {{ category_name }}
+                </h2>
+                <p class="pl-5 mt-2 font-serif text-sm text-muted italic">{{ artworks|length }} piece{% if artworks|length != 1 %}s{% endif %} in this room</p>
+              </div>
+
+              {# Featured lead + clean grid for the rest (avoids broken 12-col overlap) #}
+              {% for artwork in artworks %}
+                {% if forloop.first %}
+                  <article data-gallery-reveal
+                           {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="{% if artwork.artist %}{{ artwork.artist.name }}{% endif %}" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
+                           class="group relative mb-5 min-h-[300px] lg:min-h-[380px] rounded-2xl overflow-hidden bg-ink ring-1 ring-black/10 shadow-[0_24px_60px_-20px_rgba(31,28,26,0.35)] {% if artwork.image_path %}cursor-pointer{% endif %}"
+                           role="{% if artwork.image_path %}button{% else %}article{% endif %}"
+                           {% if artwork.image_path %}tabindex="0" aria-label="View {{ artwork.title }}"{% endif %}>
+                    <div class="absolute inset-0 z-0 overflow-hidden">
+                      {% if artwork.image_path %}
+                        <img src="{% static artwork.image_path %}" alt="" class="size-full object-cover transition duration-700 group-hover:scale-[1.03] pointer-events-none" loading="lazy" />
+                      {% else %}
+                        <div class="size-full bg-paper2 flex items-center justify-center text-muted">No image</div>
+                      {% endif %}
+                    </div>
+                    <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none"></div>
+                    <div class="absolute inset-x-0 bottom-0 z-[2] p-5 lg:p-8 text-cream pointer-events-none">
+                      <h3 class="font-display text-2xl lg:text-4xl leading-tight">{{ artwork.title }}</h3>
+                      {% if artwork.artist %}
+                        <p class="mt-2 text-[0.7rem] tracking-[0.14em] uppercase text-cream/70">{{ artwork.artist.name }}</p>
+                      {% endif %}
+                      {% if artwork.description %}
+                        <p class="mt-3 text-sm lg:text-base text-cream/85 line-clamp-3 max-w-2xl font-serif leading-relaxed">{{ artwork.description }}</p>
+                      {% endif %}
+                    </div>
+                    {% if artwork.image_path %}
+                    <span class="absolute top-4 right-4 z-[3] inline-flex items-center justify-center size-9 rounded-full bg-cream/90 text-ink text-xs font-semibold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-sm" aria-hidden="true">＋</span>
+                    {% endif %}
+                  </article>
+                {% endif %}
+              {% endfor %}
+
+              {% if artworks|length > 1 %}
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+                {% for artwork in artworks %}
+                  {% if not forloop.first %}
+                    <article data-gallery-reveal
+                             {% if artwork.image_path %}data-lb-item data-lb-src="{% static artwork.image_path %}" data-lb-title="{{ artwork.title }}" data-lb-artist="{% if artwork.artist %}{{ artwork.artist.name }}{% endif %}" data-lb-desc="{{ artwork.description|default:'' }}" data-lb-cat="{{ category_name }}"{% endif %}
+                             class="group relative min-h-[240px] rounded-2xl overflow-hidden bg-white ring-1 ring-black/[0.07] shadow-md {% if artwork.image_path %}cursor-pointer{% endif %}"
+                             role="{% if artwork.image_path %}button{% else %}article{% endif %}"
+                             {% if artwork.image_path %}tabindex="0" aria-label="View {{ artwork.title }}"{% endif %}>
+                      <div class="absolute inset-0 z-0 overflow-hidden">
+                        {% if artwork.image_path %}
+                          <img src="{% static artwork.image_path %}" alt="" class="size-full object-cover transition duration-700 group-hover:scale-[1.04] pointer-events-none" loading="lazy" />
+                        {% else %}
+                          <div class="size-full bg-paper2 flex items-center justify-center text-muted">No image</div>
+                        {% endif %}
+                      </div>
+                      <div class="absolute inset-0 z-[1] bg-gradient-to-t from-black/75 via-transparent to-transparent opacity-90 group-hover:opacity-100 pointer-events-none"></div>
+                      <div class="absolute inset-x-0 bottom-0 z-[2] p-4 text-cream pointer-events-none">
+                        <h3 class="font-display text-lg leading-tight">{{ artwork.title }}</h3>
+                        {% if artwork.artist %}
+                          <p class="mt-1 text-[0.65rem] tracking-[0.14em] uppercase text-cream/70">{{ artwork.artist.name }}</p>
+                        {% endif %}
+                        {% if artwork.description %}
+                          <p class="mt-2 text-xs text-cream/85 line-clamp-2 font-serif leading-relaxed">{{ artwork.description }}</p>
+                        {% endif %}
+                      </div>
+                      {% if artwork.image_path %}
+                      <span class="absolute top-3 right-3 z-[3] inline-flex items-center justify-center size-8 rounded-full bg-cream/90 text-ink text-[0.65rem] font-semibold opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-sm" aria-hidden="true">＋</span>
+                      {% endif %}
+                    </article>
+                  {% endif %}
+                {% endfor %}
+              </div>
+              {% endif %}
+            </section>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="mx-auto max-w-shell px-[clamp(18px,4vw,42px)] py-24 text-center">
+    <p class="font-serif text-lg text-muted">Nothing on the walls yet—pull up a chair and visit again soon; this room fills up a little more each season.</p>
+  </div>
+  {% endif %}
+
+  {# ── Lightbox (opened by [data-lb-item] clicks) ── #}
+  <div id="galleryLightbox" role="dialog" aria-modal="true" aria-labelledby="lbTitle" aria-hidden="true">
+    <div class="lb-backdrop absolute inset-0 z-0 bg-[#0f0e0d]/78 backdrop-blur-md" data-lb-close tabindex="-1"></div>
+    <div class="lb-dialog relative z-10 w-full max-w-[min(1120px,100%)] max-h-[min(92vh,900px)] flex flex-col rounded-[1.75rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.55)] ring-1 ring-white/15">
+      <div class="flex items-center justify-between gap-3 px-5 py-4 bg-gradient-to-r from-[#1f1b19] via-[#181412] to-[#1a1514] border-b border-white/[0.08]">
+        <p id="lbMeta" class="text-[0.65rem] tracking-[0.22em] uppercase text-rose/90 font-semibold truncate pr-4"></p>
+        <button type="button" id="lbClose" class="shrink-0 flex size-10 items-center justify-center rounded-full bg-white/5 text-cream hover:bg-rose/30 hover:text-cream border border-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose" aria-label="Close">
+          <span class="text-xl leading-none" aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="flex flex-1 flex-col lg:flex-row min-h-0 bg-[#12100e]">
+        <div class="relative flex flex-1 items-center justify-center min-h-[min(52vh,480px)] lg:min-h-0 p-4 sm:p-8 bg-[radial-gradient(ellipse_at_center,rgba(196,91,110,0.08)_0%,transparent_65%)]">
+          <button type="button" id="lbPrev" class="absolute left-2 sm:left-4 top-1/2 z-[2] -translate-y-1/2 flex size-11 items-center justify-center rounded-full bg-cream/10 text-cream border border-white/15 hover:bg-rose/25 hover:border-rose/40 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose disabled:opacity-25 disabled:pointer-events-none" aria-label="Previous artwork">
+            <span class="text-lg" aria-hidden="true">‹</span>
+          </button>
+          <img id="lbImg" src="" alt="" class="relative z-[1] max-h-[min(68vh,720px)] max-w-full w-auto object-contain rounded-lg shadow-[0_20px_60px_-10px_rgba(0,0,0,0.65)] ring-1 ring-black/40" />
+          <button type="button" id="lbNext" class="absolute right-2 sm:right-4 top-1/2 z-[2] -translate-y-1/2 flex size-11 items-center justify-center rounded-full bg-cream/10 text-cream border border-white/15 hover:bg-rose/25 hover:border-rose/40 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-rose disabled:opacity-25 disabled:pointer-events-none" aria-label="Next artwork">
+            <span class="text-lg" aria-hidden="true">›</span>
+          </button>
+        </div>
+        <aside class="lg:w-[min(100%,380px)] shrink-0 border-t lg:border-t-0 lg:border-l border-white/[0.08] bg-gradient-to-b from-[#faf6f1] to-[#f3ebe4] p-6 sm:p-8 overflow-y-auto max-h-[40vh] lg:max-h-none">
+          <p class="text-[0.65rem] tracking-[0.2em] uppercase text-rose-deep/90 font-semibold" id="lbRoom"></p>
+          <h2 id="lbTitle" class="mt-2 font-display text-2xl sm:text-3xl text-ink leading-tight tracking-[-0.02em]"></h2>
+          <p id="lbArtist" class="mt-3 text-sm text-muted font-medium"></p>
+          <p id="lbDesc" class="mt-5 font-serif text-[0.98rem] leading-relaxed text-ink-soft whitespace-pre-line"></p>
+          <p id="lbCounter" class="mt-8 text-xs tracking-[0.12em] uppercase text-muted font-medium"></p>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  function ready(fn) {
+    if (document.readyState !== "loading") fn();
+    else document.addEventListener("DOMContentLoaded", fn);
+  }
+  function whenGsap(cb, n) {
+    n = n || 80;
+    if (window.gsap && window.ScrollTrigger) return cb();
+    if (n <= 0) return cb();
+    setTimeout(function () { whenGsap(cb, n - 1); }, 50);
+  }
+
+  function initGalleryMotion() {
+    if (!window.gsap || !window.ScrollTrigger) return;
+    gsap.registerPlugin(ScrollTrigger);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce && window.__lenis && window.__lenisConnectGsap) {
+      window.__lenisConnectGsap(window.gsap, window.ScrollTrigger);
+    }
+    if (reduce) {
+      document.querySelectorAll("[data-gallery-reveal]").forEach(function (el) {
+        el.style.opacity = "1";
+        el.style.transform = "none";
+      });
+      return;
+    }
+    gsap.utils.toArray("[data-gallery-reveal]").forEach(function (el) {
+      gsap.fromTo(
+        el,
+        { opacity: 0, y: 28 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.82,
+          ease: "power2.out",
+          scrollTrigger: { trigger: el, start: "top 90%", once: true },
+        }
+      );
+    });
+    window.addEventListener("load", function () { ScrollTrigger.refresh(); });
+  }
+
+  function initLightbox() {
+    var modal = document.getElementById("galleryLightbox");
+    if (!modal) return;
+
+    var lbImg = document.getElementById("lbImg");
+    var lbTitle = document.getElementById("lbTitle");
+    var lbArtist = document.getElementById("lbArtist");
+    var lbDesc = document.getElementById("lbDesc");
+    var lbRoom = document.getElementById("lbRoom");
+    var lbMeta = document.getElementById("lbMeta");
+    var lbCounter = document.getElementById("lbCounter");
+    var lbClose = document.getElementById("lbClose");
+    var lbPrev = document.getElementById("lbPrev");
+    var lbNext = document.getElementById("lbNext");
+    var backdrop = modal.querySelector("[data-lb-close]");
+
+    var items = [];
+    var idx = 0;
+    var lastFocus = null;
+
+    function collectItems() {
+      items = Array.prototype.slice.call(document.querySelectorAll("[data-lb-item]"));
+    }
+
+    function itemDataset(i) {
+      var el = items[i];
+      if (!el) return null;
+      return el.dataset;
+    }
+
+    function render() {
+      var d = itemDataset(idx);
+      if (!d || !d.lbSrc) return;
+      lbImg.src = d.lbSrc;
+      lbImg.alt = d.lbTitle || "Artwork";
+      lbTitle.textContent = d.lbTitle || "";
+      lbRoom.textContent = d.lbCat || "Gallery";
+      lbMeta.textContent = "Studio Radiance · On view";
+      lbArtist.textContent = d.lbArtist || "";
+      lbArtist.classList.toggle("hidden", !d.lbArtist);
+      lbDesc.textContent = d.lbDesc || "";
+      lbCounter.textContent = (idx + 1) + " / " + items.length;
+      lbPrev.disabled = items.length <= 1 || idx <= 0;
+      lbNext.disabled = items.length <= 1 || idx >= items.length - 1;
+    }
+
+    function openAt(i) {
+      collectItems();
+      if (!items.length) return;
+      idx = Math.max(0, Math.min(i, items.length - 1));
+      render();
+      lastFocus = document.activeElement;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("gallery-lightbox-open");
+      if (window.__lenis && typeof window.__lenis.stop === "function") {
+        window.__lenis.stop();
+      }
+      requestAnimationFrame(function () {
+        lbClose.focus();
+      });
+    }
+
+    function close() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("gallery-lightbox-open");
+      lbImg.removeAttribute("src");
+      if (window.__lenis && typeof window.__lenis.start === "function") {
+        window.__lenis.start();
+      }
+      if (lastFocus && typeof lastFocus.focus === "function") {
+        lastFocus.focus();
+      }
+    }
+
+    function openFromEl(el) {
+      collectItems();
+      var i = items.indexOf(el);
+      if (i === -1) return;
+      openAt(i);
+    }
+
+    document.addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.closest("[data-lb-close]") && t.closest("#galleryLightbox")) {
+        if (t.closest(".lb-dialog") && !t.closest("[data-lb-close]")) return;
+        if (backdrop && (t === backdrop || t.closest("[data-lb-close]"))) {
+          e.preventDefault();
+          close();
+        }
+      }
+    });
+
+    document.addEventListener("click", function (e) {
+      var el = e.target.closest("[data-lb-item]");
+      if (!el || modal.contains(el)) return;
+      if (!el.dataset.lbSrc) return;
+      e.preventDefault();
+      openFromEl(el);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (!modal.classList.contains("is-open")) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === "ArrowLeft" && !lbPrev.disabled) {
+        e.preventDefault();
+        idx--;
+        render();
+      }
+      if (e.key === "ArrowRight" && !lbNext.disabled) {
+        e.preventDefault();
+        idx++;
+        render();
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      var el = e.target.closest("[data-lb-item]");
+      if (!el || el.tagName === "BUTTON") return;
+      if (!el.dataset.lbSrc) return;
+      e.preventDefault();
+      openFromEl(el);
+    });
+
+    lbClose.addEventListener("click", function (e) {
+      e.preventDefault();
+      close();
+    });
+    lbPrev.addEventListener("click", function () {
+      if (idx > 0) {
+        idx--;
+        render();
+      }
+    });
+    lbNext.addEventListener("click", function () {
+      if (idx < items.length - 1) {
+        idx++;
+        render();
+      }
+    });
+  }
+
+  ready(function () {
+    whenGsap(initGalleryMotion);
+    initLightbox();
+  });
+})();
+</script>
 {% endblock %}

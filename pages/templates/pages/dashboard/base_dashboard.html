@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Dashboard{% endblock %} · Studio Radiance</title>
+  <title>{% block title %}Studio{% endblock %} · Studio Radiance</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
@@ -13,16 +13,16 @@
 </head>
 <body>
   <div class="dash-layout">
-    <aside class="dash-sidebar" aria-label="Staff navigation">
+    <aside class="dash-sidebar" aria-label="Studio tools">
       <a class="dash-sidebar__brand" href="{% url 'dashboard:home' %}">
         <span class="dash-sidebar__mark">S</span>
         <span class="dash-sidebar__titles">
           <span class="dash-sidebar__title">Studio</span>
-          <span class="dash-sidebar__sub">Staff</span>
+          <span class="dash-sidebar__sub">Private</span>
         </span>
       </a>
       <nav class="dash-nav" aria-label="Sections">
-        <span class="dash-nav__label">Manage</span>
+        <span class="dash-nav__label">Site</span>
         <a href="{% url 'dashboard:home' %}" class="dash-nav__link{% if dash_section == 'overview' %} dash-nav__link--active{% endif %}">
           <span class="dash-nav__icon" aria-hidden="true">◎</span>
           <span class="dash-nav__text">Overview</span>
@@ -37,7 +37,7 @@
         </a>
         <a href="{% url 'dashboard:post_list' %}" class="dash-nav__link{% if dash_section == 'posts' %} dash-nav__link--active{% endif %}">
           <span class="dash-nav__icon" aria-hidden="true">✎</span>
-          <span class="dash-nav__text">Posts</span>
+          <span class="dash-nav__text">Journal</span>
         </a>
         <a href="{% url 'dashboard:category_list' %}" class="dash-nav__link{% if dash_section == 'categories' %} dash-nav__link--active{% endif %}">
           <span class="dash-nav__icon" aria-hidden="true">#</span>
@@ -55,8 +55,8 @@
           <span aria-hidden="true">☰</span>
         </button>
         <div class="dash-topbar__crumb">
-          <h1>{% block dash_title %}Dashboard{% endblock %}</h1>
-          <p>{% block dash_subtitle %}Manage gallery content{% endblock %}</p>
+          <h1>{% block dash_title %}Studio{% endblock %}</h1>
+          <p>{% block dash_subtitle %}Update the gallery and journal{% endblock %}</p>
         </div>
         <div class="dash-topbar__user">
           <strong>{{ request.user.username }}</strong>

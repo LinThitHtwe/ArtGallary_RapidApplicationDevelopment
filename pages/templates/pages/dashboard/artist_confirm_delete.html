@@ -6,7 +6,7 @@
 
 {% block dash_content %}
 <div class="dash-confirm">
-  <p>Delete <strong>{{ artist.name }}</strong>? All linked artworks and posts are removed from the database (cascade).</p>
+  <p>Delete <strong>{{ artist.name }}</strong>? All of their artworks and journal entries will disappear from the public site.</p>
   <form method="post">
     {% csrf_token %}
     <div class="dash-form-actions">

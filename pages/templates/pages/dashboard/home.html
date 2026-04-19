@@ -2,7 +2,7 @@
 
 {% block title %}Overview{% endblock %}
 {% block dash_title %}Overview{% endblock %}
-{% block dash_subtitle %}Counts and recent activity{% endblock %}
+{% block dash_subtitle %}At a glance{% endblock %}
 
 {% block dash_content %}
 <div class="dash-stats">
@@ -16,7 +16,7 @@
   </div>
   <div class="dash-stat">
     <div class="dash-stat__value">{{ counts.posts }}</div>
-    <div class="dash-stat__label">Posts</div>
+    <div class="dash-stat__label">Journal</div>
   </div>
   <div class="dash-stat">
     <div class="dash-stat__value">{{ counts.categories }}</div>
@@ -39,7 +39,7 @@
     </ul>
   </div>
   <div class="dash-card dash-mini">
-    <div class="dash-card__head"><h2>Recent posts</h2></div>
+    <div class="dash-card__head"><h2>Recent journal entries</h2></div>
     <ul>
       {% for p in recent_posts %}
         <li>
@@ -47,7 +47,7 @@
           <span>{{ p.post_date|date:"M j" }}</span>
         </li>
       {% empty %}
-        <li><span>No posts yet.</span></li>
+        <li><span>No journal entries yet.</span></li>
       {% endfor %}
     </ul>
   </div>

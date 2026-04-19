@@ -1,14 +1,14 @@
 {% extends "pages/dashboard/base_dashboard.html" %}
 
-{% block title %}Posts{% endblock %}
-{% block dash_title %}Inspiration posts{% endblock %}
-{% block dash_subtitle %}Published on the public Inspiration page{% endblock %}
+{% block title %}Journal{% endblock %}
+{% block dash_title %}Journal{% endblock %}
+{% block dash_subtitle %}These lines appear under Inspiration on the live site{% endblock %}
 
 {% block dash_content %}
 <div class="dash-card">
   <div class="dash-card__head">
-    <h2>All posts</h2>
-    <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:post_create' %}">+ New post</a>
+    <h2>All entries</h2>
+    <a class="dash-btn dash-btn--primary" href="{% url 'dashboard:post_create' %}">+ New entry</a>
   </div>
   <div class="dash-table-wrap">
     <table class="dash-table">

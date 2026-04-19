@@ -35,7 +35,7 @@ class StaffLoginView(LoginView):
                 return redirect("dashboard:home")
             messages.error(
                 request,
-                "Staff access only. This account cannot open the dashboard.",
+                "This account cannot open the private studio area.",
             )
             return redirect("pages:home")
         return super().dispatch(request, *args, **kwargs)
@@ -45,7 +45,7 @@ class StaffLoginView(LoginView):
         if not user.is_staff:
             messages.error(
                 self.request,
-                "Staff access only. Sign in with a staff account (is_staff=True).",
+                "That sign-in does not have access to the studio tools.",
             )
             return redirect("dashboard:login")
         login(self.request, user)
@@ -194,7 +194,7 @@ def post_create(request):
     form = DashboardPostForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Post published.")
+        messages.success(request, "Journal entry published.")
         return redirect("dashboard:post_list")
     return render(
         request,
@@ -209,7 +209,7 @@ def post_edit(request, pk):
     form = DashboardPostForm(request.POST or None, instance=post)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Post updated.")
+        messages.success(request, "Journal entry updated.")
         return redirect("dashboard:post_list")
     return render(
         request,
@@ -224,7 +224,7 @@ def post_delete(request, pk):
     if request.method == "POST":
         title = post.title
         post.delete()
-        messages.success(request, f"Deleted post “{title}”.")
+        messages.success(request, f"Removed journal entry “{title}”.")
         return redirect("dashboard:post_list")
     return render(
         request,
@@ -253,7 +253,7 @@ def artwork_create(request):
     form = DashboardArtworkForm(request.POST or None, request.FILES or None)
     if request.method == "POST" and form.is_valid():
         form.save()
-        messages.success(request, "Artwork added — image saved under assets/.")
+        messages.success(request, "Artwork added to the gallery.")
         return redirect("dashboard:artwork_list")
     return render(
         request,

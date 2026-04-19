@@ -2,11 +2,11 @@
 
 {% block title %}Delete category{% endblock %}
 {% block dash_title %}Delete category{% endblock %}
-{% block dash_subtitle %}May fail if artworks still reference it{% endblock %}
+{% block dash_subtitle %}This affects the live gallery{% endblock %}
 
 {% block dash_content %}
 <div class="dash-confirm">
-  <p>Delete category <strong>{{ category.name }}</strong>? Artworks in this category are deleted from the database as well (cascade).</p>
+  <p>Delete category <strong>{{ category.name }}</strong>? Every artwork filed under it will be removed from the site as well.</p>
   <form method="post">
     {% csrf_token %}
     <div class="dash-form-actions">

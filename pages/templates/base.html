@@ -25,7 +25,7 @@
           <a href="{% url 'pages:gallery' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'gallery' %} nav-link--active{% endif %}">Gallery</a>
           <a href="{% url 'pages:inspiration' %}" class="nav-link{% if request.resolver_match and request.resolver_match.url_name == 'inspiration' %} nav-link--active{% endif %}">Inspiration</a>
           {% if user.is_authenticated and user.is_staff %}
-            <a href="{% url 'dashboard:home' %}" class="nav-button{% if request.resolver_match and request.resolver_match.namespace == 'dashboard' %} nav-button--active{% endif %}">Dashboard</a>
+            <a href="{% url 'dashboard:home' %}" class="nav-button{% if request.resolver_match and request.resolver_match.namespace == 'dashboard' %} nav-button--active{% endif %}">Studio</a>
           {% endif %}
         </nav>
       </header>

@@ -96,10 +96,15 @@ def gallery_page(request):
     for artwork in qs:
         label = artwork.category.name if artwork.category else "Uncategorized"
         groups.setdefault(label, []).append(artwork)
+    preview = list(qs.exclude(image_path="")[:6])
     return render(
         request,
         "pages/gallery.html",
-        {"category_groups": list(groups.items())},
+        {
+            "category_groups": list(groups.items()),
+            "gallery_total_works": qs.count(),
+            "gallery_preview": preview,
+        },
     )
 
 
